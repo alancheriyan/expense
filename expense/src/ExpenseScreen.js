@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
-import { getFirestore, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { firebaseApp } from './firebase'; // Adjust the import based on your firebase.js file
+import {  collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { db } from './firebase'; // Adjust the import based on your firebase.js file
 import { ExpenseList } from './ExpenseList';
+import { dbSetting } from './dbSetting';
 
 const { Title } = Typography;
 
-const db = getFirestore(firebaseApp);
 
 export const ExpenseScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -46,7 +46,7 @@ export const ExpenseScreen = () => {
       const endOfDay = new Date(date.setHours(23, 59, 59, 999));
 
       const expensesQuery = query(
-        collection(db, 'tblExpense'),
+        collection(db, dbSetting.ExpenseTable),
         where('date', '>=', Timestamp.fromDate(startOfDay)),
         where('date', '<=', Timestamp.fromDate(endOfDay))
       );
@@ -75,7 +75,7 @@ export const ExpenseScreen = () => {
     try {
 
       const categorysQuery = query(
-        collection(db, 'tblCategory')
+        collection(db, dbSetting.CategoryTable)
       );
 
       const querySnapshot = await getDocs(categorysQuery);

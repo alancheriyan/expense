@@ -3,6 +3,7 @@ import { Form, Input, Select, Button, Row, Col } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "./firebase"; // Import your Firebase configuration
 import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,Timestamp  } from "firebase/firestore";
+import { dbSetting } from './dbSetting';
 
 const { Option } = Select;
 
@@ -23,7 +24,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
   const handleAddRow = async () => {
     try {
       const currentDateTimestamp = Timestamp.fromDate(currentDate);
-      const docRef = await addDoc(collection(db, "tblExpense"), {
+      const docRef = await addDoc(collection(db, dbSetting.ExpenseTable), {
         amount: "",
         categoryId: "",
         paymentTypeId: "",
@@ -44,7 +45,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
     const item = items[index];
     if (item.id) {
       try {
-        await deleteDoc(doc(db, "tblExpense", item.id));
+        await deleteDoc(doc(db, dbSetting.ExpenseTable, item.id));
       } catch (error) {
         console.error("Error deleting document: ", error);
       }
@@ -61,7 +62,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
     const item = updatedItems[index];
     if (item.id) {
       try {
-        await updateDoc(doc(db, "tblExpense", item.id), {
+        await updateDoc(doc(db, dbSetting.ExpenseTable, item.id), {
           [field]: value,
           updatedOn: serverTimestamp(),
         });
