@@ -75,9 +75,9 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
   return (
     <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
       <Row gutter={16} style={{ marginBottom: 10, fontWeight: "bold" }}>
-        <Col span={6}>Amount</Col>
-        <Col span={8}>Category</Col>
-        <Col span={8}>Payment Type</Col>
+        <Col span={6}><span className="delius-heading">Amount</span></Col>
+        <Col span={8}><span className="delius-heading">Category</span></Col>
+        <Col span={8}><span className="delius-heading">Payment Type</span></Col>
         <Col span={2}></Col>
       </Row>
       <Form form={form} layout="vertical">
@@ -93,6 +93,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
               <Input
                 type="number"
                 placeholder="Amount"
+                className="delius-regular"
                 value={item.amount}
                 onChange={(e) => handleInputChange(index, "amount", e.target.value)}
                 step="0.01" 
@@ -105,6 +106,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
                 <Select
                   placeholder="Select Category"
                   value={item.categoryId}
+                  className="delius-regular"
                   onChange={(value) =>
                     handleInputChange(index, "categoryId", value)
                   }
@@ -123,6 +125,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
                 <Select
                   placeholder="Select Payment Type"
                   value={item.paymentTypeId}
+                  className="delius-regular"
                   onChange={(value) =>
                     handleInputChange(index, "paymentTypeId", value)
                   }
@@ -152,7 +155,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
               block
               icon={<PlusOutlined />}
             >
-              Add Row
+             <span className="delius-regular">Add Expense</span> 
             </Button>
           </Col>
         </Row>

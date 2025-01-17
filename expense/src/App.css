@@ -44,3 +44,23 @@
   background: rgba(255, 255, 255, 0.8); /* Optional background overlay */
   z-index: 9999; /* Ensures the spinner is on top */
 }
+
+
+.delius-swash-caps-regular {
+  font-family: "Delius Swash Caps", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.delius-regular {
+  font-family: "Delius", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.delius-heading {
+  font-family: "Delius", serif;
+  font-weight: 900;
+  font-style: normal;
+}

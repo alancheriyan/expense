@@ -112,7 +112,7 @@ export const ExpenseScreen = () => {
           </Button>
         </Col>
         <Col>
-          <Title level={3} className="date-display">
+          <Title level={3} className="date-display delius-swash-caps-regular">
             {formatDate(currentDate)}
           </Title>
         </Col>
