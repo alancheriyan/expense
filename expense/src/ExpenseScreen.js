@@ -11,6 +11,7 @@ const db = getFirestore(firebaseApp);
 export const ExpenseScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Format date to "Jan 16, 2025"
@@ -69,6 +70,34 @@ export const ExpenseScreen = () => {
     fetchExpenses(new Date(currentDate));
   }, [currentDate]);
 
+  const fetchCategories=async()=>{
+    setLoading(true);
+    try {
+
+      const categorysQuery = query(
+        collection(db, 'tblCategory')
+      );
+
+      const querySnapshot = await getDocs(categorysQuery);
+
+      const categoryData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setCategories(categoryData);
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(()=>{
+    if(categories.length===0){
+      fetchCategories();
+    }
+  },[])
+
   return (
     <div className="container">
       <Row align="middle" justify="center" className="header-row">
@@ -99,13 +128,15 @@ export const ExpenseScreen = () => {
         </Col>
       </Row>
 
-      <div className="expense-list" style={{marginTop:"36px"}}>
+      <div className="expense-list" style={{marginTop:"36px",width:"95%"}}>
         {loading ? (
-          <Spin size="large" />
+          <span className='spin-center'> <Spin size="large" /></span>
+         
         ) : (
           <ExpenseList
             dataList={expenses}
             currentDate={currentDate}
+            categories={categories}
           />
         )}
       </div>

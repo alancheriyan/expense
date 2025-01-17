@@ -6,23 +6,18 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,Timestam
 
 const { Option } = Select;
 
-export const ExpenseList = ({ dataList,currentDate }) => {
+export const ExpenseList = ({ dataList,currentDate,categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
 
-  // Predefined categories and payment types
-  const categories = [
-    { id: "1", name: "Food" },
-    { id: "2", name: "Transport" },
-    { id: "3", name: "Shopping" },
-    { id: "4", name: "Utilities" },
-  ];
 
   const paymentTypes = [
     { id: "1", name: "Visa" },
-    { id: "2", name: "MasterCard" },
-    { id: "3", name: "Amex" },
+    { id: "2", name: "LOC" },
+    { id: "3", name: "PC" },
     { id: "4", name: "Debit Card" },
+    { id: "5", name: "Cash" },
+
   ];
 
   const handleAddRow = async () => {
@@ -93,15 +88,16 @@ export const ExpenseList = ({ dataList,currentDate }) => {
             style={{ marginBottom: 10 }}
           >
             <Col span={6}>
-              <Form.Item>
-                <Input
-                  placeholder="Amount"
-                  value={item.amount}
-                  onChange={(e) =>
-                    handleInputChange(index, "amount", e.target.value)
-                  }
-                />
-              </Form.Item>
+            <Form.Item>
+              <Input
+                type="number"
+                placeholder="Amount"
+                value={item.amount}
+                onChange={(e) => handleInputChange(index, "amount", e.target.value)}
+                step="0.01" 
+                min="0" 
+              />
+            </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item>
