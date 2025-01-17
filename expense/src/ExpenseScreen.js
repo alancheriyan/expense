@@ -105,6 +105,7 @@ export const ExpenseScreen = () => {
         ) : (
           <ExpenseList
             dataList={expenses}
+            currentDate={currentDate}
           />
         )}
       </div>

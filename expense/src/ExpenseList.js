@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Form, Input, Select, Button, Row, Col } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { db } from "./firebase"; // Import your Firebase configuration
+import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,Timestamp  } from "firebase/firestore";
 
 const { Option } = Select;
 
-export const ExpenseList = ({ dataList }) => {
+export const ExpenseList = ({ dataList,currentDate }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
 
@@ -23,21 +25,55 @@ export const ExpenseList = ({ dataList }) => {
     { id: "4", name: "Debit Card" },
   ];
 
-  const handleAddRow = () => {
-    setItems([
-      ...items,
-      { amount: "", categoryId: "", paymentTypeId: "" }, // Add an empty row
-    ]);
+  const handleAddRow = async () => {
+    try {
+      const currentDateTimestamp = Timestamp.fromDate(currentDate);
+      const docRef = await addDoc(collection(db, "tblExpense"), {
+        amount: "",
+        categoryId: "",
+        paymentTypeId: "",
+        date:currentDateTimestamp,
+        createdOn: serverTimestamp(),
+        updatedOn: serverTimestamp(),
+      });
+      setItems([
+        ...items,
+        { id: docRef.id, amount: "", categoryId: "", paymentTypeId: "" }, // Add row with Firebase ID
+      ]);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
-  const handleDeleteRow = (index) => {
+  const handleDeleteRow = async (index) => {
+    const item = items[index];
+    if (item.id) {
+      try {
+        await deleteDoc(doc(db, "tblExpense", item.id));
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+      }
+    }
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const handleInputChange = (index, field, value) => {
+  const handleInputChange = async (index, field, value) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
     setItems(updatedItems);
+
+    // Update Firestore document
+    const item = updatedItems[index];
+    if (item.id) {
+      try {
+        await updateDoc(doc(db, "tblExpense", item.id), {
+          [field]: value,
+          updatedOn: serverTimestamp(),
+        });
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+    }
   };
 
   return (
@@ -51,7 +87,7 @@ export const ExpenseList = ({ dataList }) => {
       <Form form={form} layout="vertical">
         {items.map((item, index) => (
           <Row
-            key={index}
+            key={item.id || index}
             gutter={16}
             align="middle"
             style={{ marginBottom: 10 }}
@@ -103,7 +139,7 @@ export const ExpenseList = ({ dataList }) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={2} style={{paddingBottom:"25px"}}>
+            <Col span={2} style={{ paddingBottom: "25px" }}>
               <MinusCircleOutlined
                 onClick={() => handleDeleteRow(index)}
                 style={{ fontSize: 18, color: "red", cursor: "pointer" }}
