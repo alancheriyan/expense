@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { Form, Input, Select, Button, Row, Col } from "antd";
+import React, { useState,useEffect } from "react";
+import { Form, Input, Select, Button, Row, Col,Typography } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "./firebase"; // Import your Firebase configuration
 import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,Timestamp  } from "firebase/firestore";
 import { dbSetting } from './dbSetting';
 
 const { Option } = Select;
+const { Title } = Typography;
 
 export const ExpenseList = ({ dataList,currentDate,categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
-
+  const [totalAmount, setTotalAmount] = useState(0);
 
   const paymentTypes = [
     { id: "1", name: "Visa" },
@@ -72,8 +73,22 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
     }
   };
 
+  useEffect(() => {
+    const total = items.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
+    setTotalAmount(total);
+  }, [items]);
+
   return (
     <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
+      <Row style={{ marginTop: "10px",marginLeft:"45%" }}>
+        <Col span={24}>
+          <Row justify="end">
+            <Title level={5} className="delius-regular" style={{fontSize:"16px",color:"#247108"}}>
+              Total: {totalAmount.toFixed(2)} CAD
+            </Title>
+          </Row>
+        </Col>
+      </Row>
       <Row gutter={16} style={{ marginBottom: 10, fontWeight: "bold" }}>
         <Col span={6}><span className="delius-heading">Amount</span></Col>
         <Col span={8}><span className="delius-heading">Category</span></Col>
