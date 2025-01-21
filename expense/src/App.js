@@ -8,12 +8,12 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import { ExpenseScreen } from "./ExpenseScreen";
+import { IncomeScreen } from "./IncomeScreen";
 
 const { Content } = Layout;
 
 const Summary = () => <div>Summary Content</div>;
 const Setting = () => <div>Setting Content</div>;
-const Income = () => <div>Income Content</div>;
 
 const App = () => {
   const location = useLocation();
@@ -26,7 +26,7 @@ const App = () => {
           <Route path="/" element={<ExpenseScreen />} />
           <Route path="/summary" element={<Summary />} />
           <Route path="/setting" element={<Setting />} />
-          <Route path="/income" element={<Income />} />
+          <Route path="/income" element={<IncomeScreen />} />
 
         </Routes>
       </Content>
