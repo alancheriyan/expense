@@ -8,7 +8,7 @@ import "./App.css"
 
 const { Title } = Typography;
 
-export const ExpenseScreen = () => {
+const ExpenseScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -141,3 +141,5 @@ export const ExpenseScreen = () => {
     </div>
   );
 };
+
+export default ExpenseScreen;

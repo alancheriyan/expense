@@ -1,19 +1,20 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Spin } from "antd";
 import {
   WalletOutlined,
   BarChartOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { ExpenseScreen } from "./ExpenseScreen";
-import { IncomeScreen } from "./IncomeScreen";
 
 const { Content } = Layout;
 
-const Summary = () => <div>Summary Content</div>;
-const Setting = () => <div>Setting Content</div>;
+// Lazy-loaded components
+const ExpenseScreen = lazy(() => import("./ExpenseScreen"));
+const IncomeScreen = lazy(() => import("./IncomeScreen"));
+const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
+//const Setting = lazy(() => import("./Setting"));
 
 const App = () => {
   const location = useLocation();
@@ -22,13 +23,14 @@ const App = () => {
   return (
     <Layout style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       <Content style={{ padding: "16px", flex: 1 }}>
-        <Routes>
-          <Route path="/" element={<ExpenseScreen />} />
-          <Route path="/summary" element={<Summary />} />
-          <Route path="/setting" element={<Setting />} />
-          <Route path="/income" element={<IncomeScreen />} />
-
-        </Routes>
+        <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+          <Routes>
+            <Route path="/" element={<ExpenseScreen />} />
+             <Route path="/summary" element={<SummaryScreen />} />
+           {/* <Route path="/setting" element={<Setting />} /> */}
+            <Route path="/income" element={<IncomeScreen />} />
+          </Routes>
+        </Suspense>
       </Content>
       <Menu
         theme="light"
