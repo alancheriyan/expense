@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
-import {  collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from './firebase'; // Adjust the import based on your firebase.js file
 import { ExpenseList } from './ExpenseList';
 import { dbSetting } from './dbSetting';
+import "./App.css"
 
 const { Title } = Typography;
-
 
 export const ExpenseScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -70,13 +70,10 @@ export const ExpenseScreen = () => {
     fetchExpenses(new Date(currentDate));
   }, [currentDate]);
 
-  const fetchCategories=async()=>{
+  const fetchCategories = async () => {
     setLoading(true);
     try {
-
-      const categorysQuery = query(
-        collection(db, dbSetting.CategoryTable)
-      );
+      const categorysQuery = query(collection(db, dbSetting.CategoryTable));
 
       const querySnapshot = await getDocs(categorysQuery);
 
@@ -90,17 +87,17 @@ export const ExpenseScreen = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(categories.length===0){
+  useEffect(() => {
+    if (categories.length === 0) {
       fetchCategories();
     }
-  },[])
+  }, []);
 
   return (
     <div className="container">
-      <Row align="middle" justify="center" className="header-row">
+      <Row align="middle" justify="space-between" className="header-row">
         <Col>
           <Button
             type="primary"
@@ -128,10 +125,11 @@ export const ExpenseScreen = () => {
         </Col>
       </Row>
 
-      <div className="expense-list" style={{marginTop:"36px",width:"95%"}}>
+      <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
         {loading ? (
-          <span className='spin-center'> <Spin size="large" /></span>
-         
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+            <Spin size="large" />
+          </div>
         ) : (
           <ExpenseList
             dataList={expenses}

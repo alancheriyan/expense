@@ -1,6 +1,5 @@
 /* General container for the entire screen */
 .container {
-  padding: 20px;
   box-sizing: border-box;
   height: 100vh;
   display: flex;

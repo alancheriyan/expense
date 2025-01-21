@@ -1,14 +1,22 @@
-import React, { useState,useEffect } from "react";
-import { Form, Input, Select, Button, Row, Col,Typography } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Select, Button, Row, Col, Typography } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "./firebase"; // Import your Firebase configuration
-import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp,Timestamp  } from "firebase/firestore";
-import { dbSetting } from './dbSetting';
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  Timestamp,
+} from "firebase/firestore";
+import { dbSetting } from "./dbSetting";
 
 const { Option } = Select;
 const { Title } = Typography;
 
-export const ExpenseList = ({ dataList,currentDate,categories }) => {
+export const ExpenseList = ({ dataList, currentDate, categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -19,7 +27,6 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
     { id: "3", name: "PC" },
     { id: "4", name: "Debit Card" },
     { id: "5", name: "Cash" },
-
   ];
 
   const handleAddRow = async () => {
@@ -29,7 +36,7 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
         amount: "",
         categoryId: "",
         paymentTypeId: "",
-        date:currentDateTimestamp,
+        date: currentDateTimestamp,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
       });
@@ -80,10 +87,14 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
 
   return (
     <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
-      <Row style={{ marginTop: "10px",marginLeft:"45%" }}>
+      <Row style={{ marginTop: "10px", marginLeft: "45%" }}>
         <Col span={24}>
           <Row justify="end">
-            <Title level={5} className="delius-regular" style={{fontSize:"16px",color:"#247108"}}>
+            <Title
+              level={5}
+              className="delius-regular"
+              style={{ fontSize: "16px", color: "#247108" }}
+            >
               Total: {totalAmount.toFixed(2)} CAD
             </Title>
           </Row>
@@ -95,86 +106,97 @@ export const ExpenseList = ({ dataList,currentDate,categories }) => {
         <Col span={8}><span className="delius-heading">Payment Type</span></Col>
         <Col span={2}></Col>
       </Row>
-      <Form form={form} layout="vertical">
-        {items.map((item, index) => (
-          <Row
-            key={item.id || index}
-            gutter={16}
-            align="middle"
-            style={{ marginBottom: 10 }}
-          >
-            <Col span={6}>
-            <Form.Item>
-              <Input
-                type="number"
-                placeholder="Amount"
-                className="delius-regular"
-                value={item.amount}
-                onChange={(e) => handleInputChange(index, "amount", e.target.value)}
-                step="0.01" 
-                min="0" 
-              />
-            </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item>
-                <Select
-                  placeholder="Select Category"
-                  value={item.categoryId}
-                  className="delius-regular"
-                  onChange={(value) =>
-                    handleInputChange(index, "categoryId", value)
-                  }
-                  style={{ width: "100%" }}
-                >
-                  {categories.map((category) => (
-                    <Option key={category.id} value={category.id}>
-                      {category.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item>
-                <Select
-                  placeholder="Select Payment Type"
-                  value={item.paymentTypeId}
-                  className="delius-regular"
-                  onChange={(value) =>
-                    handleInputChange(index, "paymentTypeId", value)
-                  }
-                  style={{ width: "100%" }}
-                >
-                  {paymentTypes.map((type) => (
-                    <Option key={type.id} value={type.id}>
-                      {type.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={2} style={{ paddingBottom: "25px" }}>
-              <MinusCircleOutlined
-                onClick={() => handleDeleteRow(index)}
-                style={{ fontSize: 18, color: "red", cursor: "pointer" }}
-              />
-            </Col>
-          </Row>
-        ))}
-        <Row>
-          <Col span={24}>
-            <Button
-              type="dashed"
-              onClick={handleAddRow}
-              block
-              icon={<PlusOutlined />}
+      <div
+        style={{
+          maxHeight: "660px", // Set a fixed height for the scrollable area
+          overflowY: "auto", // Enable vertical scrolling
+          paddingRight: "10px", // Add some padding for better UI
+          marginBottom: "20px",
+        }}
+      >
+        <Form form={form} layout="vertical">
+          {items.map((item, index) => (
+            <Row
+              key={item.id || index}
+              gutter={16}
+              align="middle"
+              style={{ marginBottom: 10 }}
             >
-             <span className="delius-regular">Add Expense</span> 
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+              <Col span={6}>
+                <Form.Item>
+                  <Input
+                    type="number"
+                    placeholder="Amount"
+                    className="delius-regular"
+                    value={item.amount}
+                    onChange={(e) =>
+                      handleInputChange(index, "amount", e.target.value)
+                    }
+                    step="0.01"
+                    min="0"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  <Select
+                    placeholder="Select Category"
+                    value={item.categoryId}
+                    className="delius-regular"
+                    onChange={(value) =>
+                      handleInputChange(index, "categoryId", value)
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {categories.map((category) => (
+                      <Option key={category.id} value={category.id}>
+                        {category.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  <Select
+                    placeholder="Select Payment Type"
+                    value={item.paymentTypeId}
+                    className="delius-regular"
+                    onChange={(value) =>
+                      handleInputChange(index, "paymentTypeId", value)
+                    }
+                    style={{ width: "100%" }}
+                  >
+                    {paymentTypes.map((type) => (
+                      <Option key={type.id} value={type.id}>
+                        {type.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={2} style={{ paddingBottom: "25px" }}>
+                <MinusCircleOutlined
+                  onClick={() => handleDeleteRow(index)}
+                  style={{ fontSize: 18, color: "red", cursor: "pointer" }}
+                />
+              </Col>
+            </Row>
+          ))}
+        </Form>
+      </div>
+      <Row>
+        <Col span={24}>
+          <Button
+            type="dashed"
+            onClick={handleAddRow}
+            block
+            icon={<PlusOutlined />}
+          >
+            <span className="delius-regular">Add Expense</span>
+          </Button>
+        </Col>
+      </Row>
     </div>
   );
 };
