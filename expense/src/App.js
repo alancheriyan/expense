@@ -33,65 +33,55 @@ const App = () => {
         </Suspense>
       </Content>
       <Menu
-        theme="light"
-        mode="horizontal"
-        selectedKeys={[currentKey]}
-        style={{
-          position: "fixed",
-          bottom: 0,
-          width: "100%",
-          borderTopLeftRadius: "16px",
-          borderTopRightRadius: "16px",
-          display: "flex",
-          justifyContent: "space-around",
-          boxShadow: "0 -2px 5px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Menu.Item
-          key="/"
-          icon={<WalletOutlined />}
-          style={{
-            borderRadius: "50%",
-            textAlign: "center",
-            padding: "8px 16px",
-          }}
-        >
-          <Link to="/">Expense</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="/income"
-          icon={<WalletOutlined />}
-          style={{
-            borderRadius: "50%",
-            textAlign: "center",
-            padding: "8px 16px",
-          }}
-        >
-          <Link to="/income">Income</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="/summary"
-          icon={<BarChartOutlined />}
-          style={{
-            borderRadius: "50%",
-            textAlign: "center",
-            padding: "8px 16px",
-          }}
-        >
-          <Link to="/summary">Summary</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="/setting"
-          icon={<SettingOutlined />}
-          style={{
-            borderRadius: "50%",
-            textAlign: "center",
-            padding: "8px 16px",
-          }}
-        >
-          <Link to="/setting">Setting</Link>
-        </Menu.Item>
-      </Menu>
+  theme="light"
+  mode="horizontal"
+  selectedKeys={[currentKey]}
+  style={{
+    position: "fixed",
+    bottom: "10px",
+    width: "100%",
+    borderTopLeftRadius: "16px",
+    borderTopRightRadius: "16px",
+    display: "flex",
+    justifyContent: "space-around",
+    boxShadow: "0 -2px 5px rgba(0, 0, 0, 0.1)",
+  }}
+>
+  <Menu.Item
+    key="/"
+    icon={<WalletOutlined />}
+    className="menu-item"
+    style={{
+      textAlign: "center",
+      padding: "8px 16px",
+    }}
+  >
+    <Link to="/">Expense</Link>
+  </Menu.Item>
+  <Menu.Item
+    key="/income"
+    icon={<WalletOutlined />}
+    className="menu-item"
+    style={{
+      textAlign: "center",
+      padding: "8px 16px",
+    }}
+  >
+    <Link to="/income">Income</Link>
+  </Menu.Item>
+  <Menu.Item
+    key="/summary"
+    icon={<BarChartOutlined />}
+    className="menu-item"
+    style={{
+      textAlign: "center",
+      padding: "8px 16px",
+    }}
+  >
+    <Link to="/summary">Summary</Link>
+  </Menu.Item>
+ 
+</Menu>
     </Layout>
   );
 };

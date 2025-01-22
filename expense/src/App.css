@@ -63,3 +63,16 @@
   font-weight: 900;
   font-style: normal;
 }
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px; /* Decrease the label font size */
+}
+
+.menu-item .anticon {
+  margin-bottom: 4px; /* Add space between icon and label */
+  font-size: 18px; /* Adjust the icon size if needed */
+}

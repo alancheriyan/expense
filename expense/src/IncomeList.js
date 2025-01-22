@@ -124,6 +124,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
                     }
                     step="0.01"
                     min="0"
+                    inputMode="decimal" 
                   />
                 </Form.Item>
               </Col>
