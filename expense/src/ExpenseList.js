@@ -11,7 +11,8 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { dbSetting } from "./dbSetting";
+import { dbSetting,paymentTypes } from "./dbSetting";
+import CustomizedSelectWithScrollList from "./CustomizedSelectWithScrollList"
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -21,13 +22,6 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  const paymentTypes = [
-    { id: "1", name: "Visa" },
-    { id: "2", name: "LOC" },
-    { id: "3", name: "PC" },
-    { id: "4", name: "Debit Card" },
-    { id: "5", name: "Cash" },
-  ];
 
   const handleAddRow = async () => {
     try {
@@ -140,7 +134,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
               </Col>
               <Col span={8}>
                 <Form.Item>
-                  <Select
+                 {/*  <Select
                     placeholder="Select Category"
                     value={item.categoryId}
                     className="delius-regular"
@@ -154,12 +148,18 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
                         {category.name}
                       </Option>
                     ))}
-                  </Select>
+                  </Select> */}
+                  <CustomizedSelectWithScrollList 
+                    data={categories} 
+                    onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
+                    drawerText="Select Category" 
+                    defaultValue={item.categoryId}
+                  />
                 </Form.Item>
               </Col>
               <Col span={8}>
                 <Form.Item>
-                  <Select
+                {/*   <Select
                     placeholder="Select Payment Type"
                     value={item.paymentTypeId}
                     className="delius-regular"
@@ -173,7 +173,13 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
                         {type.name}
                       </Option>
                     ))}
-                  </Select>
+                  </Select> */}
+                  <CustomizedSelectWithScrollList 
+                    data={paymentTypes} 
+                    onSelectedKeyChange={(key)=>handleInputChange(index, "paymentTypeId",key)} 
+                    drawerText="Select Payment Type" 
+                    defaultValue={item.paymentTypeId}
+                  />
                 </Form.Item>
               </Col>
               <Col span={2} style={{ paddingBottom: "25px" }}>

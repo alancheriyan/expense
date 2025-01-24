@@ -12,6 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { dbSetting } from "./dbSetting";
+import CustomizedSelectWithScrollList from "./CustomizedSelectWithScrollList";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -130,7 +131,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
               </Col>
               <Col span={8}>
                 <Form.Item>
-                  <Select
+                  {/* <Select
                     placeholder="Select Category"
                     value={item.categoryId}
                     className="delius-regular"
@@ -144,7 +145,13 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
                         {category.name}
                       </Option>
                     ))}
-                  </Select>
+                  </Select> */}
+                   <CustomizedSelectWithScrollList 
+                    data={categories} 
+                    onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
+                    drawerText="Select Category" 
+                    defaultValue={item.categoryId}
+                  />
                 </Form.Item>
               </Col> 
               <Col span={2} style={{ paddingBottom: "25px" }}>

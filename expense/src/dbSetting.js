@@ -14,7 +14,7 @@ const devDatabase={
 
 const IncomeCategory=[{
     id:"vqAVMpLU1KZBWd12XQFN",
-    name:"Paycheck"
+    name:"Pay cheque"
 },
 {
     id:"4W3uLpjTFBvVJtDKJ3Qb",
@@ -40,6 +40,15 @@ const IncomeCategory=[{
 }
 ]
 
+const paymentTypes = [
+    { id: "1", name: "Visa" },
+    { id: "2", name: "LOC" },
+    { id: "3", name: "PC" },
+    { id: "4", name: "Debit Card" },
+    { id: "5", name: "Cash" },
+  ];
+
+
 const dbSetting=prodDatabase
 
-export{dbSetting,IncomeCategory}
+export{dbSetting,IncomeCategory,paymentTypes}
