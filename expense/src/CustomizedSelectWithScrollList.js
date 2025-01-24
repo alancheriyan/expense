@@ -2,7 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import { Input, Drawer } from "antd";
 import "./CustomizedSelectWithScrollList.css";
 
-const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }) => {
+const CustomizedSelectWithScrollList = ({
+  data,
+  onSelectedKeyChange,
+  drawerText,
+  defaultValue,
+}) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
   const scrollRef = useRef();
@@ -28,7 +33,7 @@ const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }
       const newValue = selectedItem.getAttribute("data-value");
       if (newValue !== selectedValue) {
         setSelectedValue(newValue);
-        const selectedKey = data.find((item) => item.name === newValue)?.key;
+        const selectedKey = data.find((item) => item.name === newValue)?.id;
         if (selectedKey) onSelectedKeyChange(selectedKey);
       }
     }
@@ -37,30 +42,40 @@ const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }
   const handleSelect = (key) => {
     const selectedItem = data.find((item) => item.key === key);
     if (selectedItem) {
-      setSelectedValue(selectedItem.name); // Update the selected value
-      onSelectedKeyChange(key); // Notify parent of the selected key
+      setSelectedValue(selectedItem.name);
+      onSelectedKeyChange(key);
     }
-    setDrawerVisible(false); // Close the drawer
+    setDrawerVisible(false);
   };
 
-  const scrollToMiddle = () => {
+  const scrollToSelectedItem = () => {
     const container = scrollRef.current;
     if (!container || data.length === 0) return;
 
-    const firstItem = container.children[0];
-    const lastItem = container.children[container.children.length - 1];
+    const selectedName = data.find((item) => item.id === defaultValue)?.name;
+    setSelectedValue(selectedName);
 
-    // Scroll to first item
-    container.scrollTop = firstItem.offsetTop - (container.offsetHeight / 2 - firstItem.offsetHeight / 2);
+    const selectedItem = Array.from(container.children).find(
+      (child) => child.getAttribute("data-value") === selectedName
+    );
 
-    handleScroll(); // Trigger to highlight the correct item
+    if (selectedItem) {
+      container.scrollTop =
+        selectedItem.offsetTop -
+        (container.offsetHeight / 2 - selectedItem.offsetHeight / 2);
+    }
   };
 
   useEffect(() => {
     if (drawerVisible && scrollRef.current) {
-      scrollToMiddle();
+      scrollToSelectedItem();
     }
   }, [drawerVisible]);
+
+  useEffect(() => {
+    const selectedName = data.find((item) => item.id === defaultValue)?.name;
+    if (selectedName) setSelectedValue(selectedName);
+  }, [defaultValue]);
 
   return (
     <div>
@@ -68,7 +83,7 @@ const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }
         readOnly
         value={selectedValue}
         placeholder={drawerText}
-        onClick={() => setDrawerVisible(true)} // Open the drawer
+        onClick={() => setDrawerVisible(true)}
         style={{ cursor: "pointer" }}
         className="delius-regular"
       />
@@ -81,9 +96,9 @@ const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }
         height={300}
         style={{
           padding: 0,
-          borderTopLeftRadius: "16px", // Adjust the radius as needed
-          borderTopRightRadius: "16px", // Adjust the radius as needed
-          overflow: "hidden", // Ensures no content spills out
+          borderTopLeftRadius: "16px",
+          borderTopRightRadius: "16px",
+          overflow: "hidden",
         }}
       >
         <div className="custom-scroll-list-wrapper">
