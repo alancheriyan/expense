@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Input, Drawer } from "antd";
 import "./CustomizedSelectWithScrollList.css";
 
-const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange }) => {
+const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange,drawerText }) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
   const scrollRef = useRef();
@@ -67,18 +67,24 @@ const CustomizedSelectWithScrollList = ({ data, onSelectedKeyChange }) => {
       <Input
         readOnly
         value={selectedValue}
-        placeholder="Select an option"
+        placeholder={drawerText}
         onClick={() => setDrawerVisible(true)} // Open the drawer
         style={{ cursor: "pointer" }}
+        className="delius-regular"
       />
       <Drawer
-        title="Select an Option"
+        title={drawerText}
         placement="bottom"
         closable
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
         height={300}
-        style={{ padding: 0 }}
+        style={{
+          padding: 0,
+          borderTopLeftRadius: "16px", // Adjust the radius as needed
+          borderTopRightRadius: "16px", // Adjust the radius as needed
+          overflow: "hidden", // Ensures no content spills out
+        }}
       >
         <div className="custom-scroll-list-wrapper">
           <div

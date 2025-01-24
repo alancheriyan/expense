@@ -7,12 +7,12 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-/* const handleSelectedKeyChange = (key) => {
+const handleSelectedKeyChange = (key) => {
   console.log(key);
-}; */
+};
 root.render(
   <React.StrictMode>
-   {/*  <CustomizedSelectWithScrollList  data={IncomeCategory} onSelectedKeyChange={handleSelectedKeyChange}/> */}
+   {/*  <CustomizedSelectWithScrollList  data={IncomeCategory} onSelectedKeyChange={handleSelectedKeyChange} drawerText="Select Category"/> */}
    <MainApp/>
   </React.StrictMode>
 );

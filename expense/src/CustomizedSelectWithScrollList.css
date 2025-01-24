@@ -1,61 +1,76 @@
 /* Wrapper for the scrollable list */
 .custom-scroll-list-wrapper {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  .custom-scroll-list {
-    height: 100%;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* For small screens (mobile devices) */
-  @media (max-width: 767px) {
-    .custom-scroll-list {
-      padding-top: 17%;
-      padding-bottom: 17%;
-    }
-  }
-  
-  /* For larger screens (tablets and above) */
-  @media (min-width: 768px) {
-    .custom-scroll-list {
-      padding-top: 5%; /* Reduced padding for larger screens */
-      padding-bottom: 5%;
-    }
-  }
-  
-  /* Each list item */
-  .custom-scroll-list-item {
-    scroll-snap-align: center;
-    text-align: center;
-    font-size: 20px;
-    padding: 20px 0;
-    color: #999;
-    cursor: pointer;
-  }
-  
-  /* Highlighted (selected) item */
-  .custom-scroll-list-item.selected {
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
 
-  }
+.custom-scroll-list {
+  height: 100%;
+  overflow-y: scroll; /* Enables scrolling */
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on mobile devices */
   
-  /* Highlight indicator to visually indicate the middle of the scroll */
-  .highlight-indicator {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 50px;
-    transform: translateY(-50%);
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    pointer-events: none;
+  /* Hide the scrollbar */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.custom-scroll-list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+
+/* For small screens (mobile devices) */
+@media (max-width: 767px) {
+  .custom-scroll-list {
+    padding-top: 17%;
+    padding-bottom: 17%;
   }
-  
+}
+
+/* For larger screens (tablets and above) */
+@media (min-width: 768px) {
+  .custom-scroll-list {
+    padding-top: 5%; /* Reduced padding for larger screens */
+    padding-bottom: 5%;
+  }
+}
+
+/* Each list item */
+.custom-scroll-list-item {
+  scroll-snap-align: center;
+  text-align: center;
+  font-size: 20px;
+  padding: 20px 0;
+  color: #999;
+  cursor: pointer;
+  font-family: "Delius", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Highlighted (selected) item */
+.custom-scroll-list-item.selected {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Highlight indicator to visually indicate the middle of the scroll */
+.highlight-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 50px;
+  transform: translateY(-50%);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  pointer-events: none;
+}
+
+
+.delius-regular {
+  font-family: "Delius", serif;
+  font-weight: 400;
+  font-style: normal;
+}
