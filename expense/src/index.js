@@ -4,10 +4,16 @@ import './index.css';
 import MainApp  from './App';
 import reportWebVitals from './reportWebVitals';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+/* const handleSelectedKeyChange = (key) => {
+  console.log(key);
+}; */
 root.render(
   <React.StrictMode>
-    <MainApp  />
+   {/*  <CustomizedSelectWithScrollList  data={IncomeCategory} onSelectedKeyChange={handleSelectedKeyChange}/> */}
+   <MainApp/>
   </React.StrictMode>
 );
 
