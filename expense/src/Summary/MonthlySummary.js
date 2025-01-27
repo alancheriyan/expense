@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Select, Card, Row, Col,Statistic  } from "antd";
+import React, { useState, useEffect ,lazy,Suspense} from "react";
+import { Select, Card, Row, Col,Statistic,Spin  } from "antd";
 import {  collection, getDocs ,Timestamp,where,query} from "firebase/firestore";
 import {db} from "../firebase"; 
 import { dbSetting } from "../dbSetting";
 
 const { Option } = Select;
+const CategoryBased = lazy(() => import("./CategoryBased"));
 
-const MonthlySummary = () => {
+const MonthlySummary = ({categoriesCollection}) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
+  const [expenses,setExpenses]=useState([]);
 
   const fetchExpenses = async (month) => {
     try {
@@ -29,6 +31,13 @@ const MonthlySummary = () => {
       );
   
       const snapshot = await getDocs(expensesQuery);
+
+      const expensesData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setExpenses(expensesData);
   
       const filteredExpenses = snapshot.docs.map((doc) => doc.data());
       const total = filteredExpenses.reduce((sum, expense) => {
@@ -137,6 +146,13 @@ const MonthlySummary = () => {
             title="Total Income"
         />
         </Card>
+        <div  style={{
+            marginTop: "20px"
+        }}>
+        <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+          <CategoryBased data={expenses} categoriesCollection={categoriesCollection} totalExpense={totalExpense}/>
+        </Suspense>
+        </div>
     </div>
   );
 };

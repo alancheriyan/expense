@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense,useState,useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Layout, Menu, Spin } from "antd";
 import {
@@ -7,6 +7,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
+import { fetchCategories } from "./DataAccess";
 
 const { Content } = Layout;
 
@@ -19,14 +20,37 @@ const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const App = () => {
   const location = useLocation();
   const currentKey = location.pathname;
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  return (
+  const loadCategories = async () => {
+    setLoading(true);
+    try {
+      const categoryData = await fetchCategories();
+      setCategories(categoryData);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  if(loading){
+    return( <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                <Spin size="large" />
+              </div>)
+  }
+  return ( 
     <Layout style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       <Content style={{ padding: "16px", flex: 1 }}>
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
           <Routes>
-            <Route path="/" element={<ExpenseScreen />} />
-             <Route path="/summary" element={<SummaryScreen />} />
+            <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
+             <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
            {/* <Route path="/setting" element={<Setting />} /> */}
             <Route path="/income" element={<IncomeScreen />} />
           </Routes>

@@ -8,10 +8,10 @@ import "./App.css"
 
 const { Title } = Typography;
 
-const ExpenseScreen = () => {
+const ExpenseScreen = ({categoriesCollection}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(categoriesCollection);
   const [loading, setLoading] = useState(false);
 
   // Format date to "Jan 16, 2025"
@@ -70,7 +70,7 @@ const ExpenseScreen = () => {
     fetchExpenses(new Date(currentDate));
   }, [currentDate]);
 
-  const fetchCategories = async () => {
+  /* const fetchCategories = async () => {
     setLoading(true);
     try {
       const categorysQuery = query(collection(db, dbSetting.CategoryTable));
@@ -93,7 +93,7 @@ const ExpenseScreen = () => {
     if (categories.length === 0) {
       fetchCategories();
     }
-  }, []);
+  }, []); */
 
   return (
     <div className="container">
