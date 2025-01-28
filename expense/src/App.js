@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import { fetchCategories } from "./DataAccess";
+import './App.css';
 
 const { Content } = Layout;
 
@@ -15,7 +16,7 @@ const { Content } = Layout;
 const ExpenseScreen = lazy(() => import("./ExpenseScreen"));
 const IncomeScreen = lazy(() => import("./IncomeScreen"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
-//const Setting = lazy(() => import("./Setting"));
+const Setting = lazy(() => import("./Settings/SettingScreen"));
 
 const App = () => {
   const location = useLocation();
@@ -39,6 +40,10 @@ const App = () => {
     loadCategories();
   }, []);
 
+  const handleCategoriesChange = (updatedCategories) => {
+    setCategories(updatedCategories);
+  };
+
   if(loading){
     return( <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
                 <Spin size="large" />
@@ -51,7 +56,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
              <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
-           {/* <Route path="/setting" element={<Setting />} /> */}
+             <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
             <Route path="/income" element={<IncomeScreen />} />
           </Routes>
         </Suspense>
@@ -73,36 +78,64 @@ const App = () => {
 >
   <Menu.Item
     key="/"
-    icon={<WalletOutlined />}
     className="menu-item"
     style={{
       textAlign: "center",
       padding: "8px 16px",
     }}
   >
-    <Link to="/">Expense</Link>
+    <Link to="/">
+    <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <WalletOutlined style={{ fontSize: "20px" }} />
+        Expense
+      </span>
+    </Link>
   </Menu.Item>
   <Menu.Item
     key="/income"
-    icon={<WalletOutlined />}
     className="menu-item"
     style={{
       textAlign: "center",
       padding: "8px 16px",
     }}
   >
-    <Link to="/income">Income</Link>
+    <Link to="/income">
+      <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <WalletOutlined style={{ fontSize: "20px" }} />
+        Income
+      </span>
+    </Link>
   </Menu.Item>
   <Menu.Item
     key="/summary"
-    icon={<BarChartOutlined />}
     className="menu-item"
     style={{
       textAlign: "center",
       padding: "8px 16px",
     }}
   >
-    <Link to="/summary">Summary</Link>
+    <Link to="/summary">
+      <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <BarChartOutlined style={{ fontSize: "20px" }} />
+        Summary
+      </span>
+    </Link>
+  </Menu.Item>
+
+  <Menu.Item
+    key="/settings"
+    className="menu-item"
+    style={{
+      textAlign: "center",
+      padding: "8px 16px",
+    }}
+  >
+    <Link to="/settings">
+    <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <SettingOutlined style={{ fontSize: "20px" }} />
+        Settings
+      </span>
+    </Link>
   </Menu.Item>
  
 </Menu>

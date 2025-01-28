@@ -7,7 +7,7 @@ const prodDatabase={
 
 const devDatabase={
     ExpenseTable:"tblExpense_temp",
-    CategoryTable:"tblCategory",
+    CategoryTable:"tblCategory_temp",
     IncomeTable:"tblIncome_temp",
     IncomeCategoryTable:"tblIncomeCategory"
 }
