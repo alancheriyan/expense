@@ -5,6 +5,7 @@ import {
   WalletOutlined,
   BarChartOutlined,
   SettingOutlined,
+  BankFilled
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import { fetchCategories } from "./DataAcess/DataAccess";
@@ -17,6 +18,7 @@ const ExpenseScreen = lazy(() => import("./Expense/ExpenseScreen"));
 const IncomeScreen = lazy(() => import("./Income/IncomeScreen"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
+const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
 
 const App = () => {
   const location = useLocation();
@@ -57,7 +59,8 @@ const App = () => {
             <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
              <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
              <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
-            <Route path="/income" element={<IncomeScreen />} />
+             <Route path="/income" element={<IncomeScreen />} />
+             <Route path="/bankings" element={<BalanceSheet />} />
           </Routes>
         </Suspense>
       </Content>
@@ -118,6 +121,23 @@ const App = () => {
       <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <BarChartOutlined style={{ fontSize: "20px" }} />
         Summary
+      </span>
+    </Link>
+  </Menu.Item>
+
+
+  <Menu.Item
+    key="/bankings"
+    className="menu-item"
+    style={{
+      textAlign: "center",
+      padding: "8px 16px",
+    }}
+  >
+    <Link to="/bankings">
+    <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <BankFilled style={{ fontSize: "20px" }} />
+        Banking
       </span>
     </Link>
   </Menu.Item>

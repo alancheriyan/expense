@@ -49,6 +49,6 @@ const paymentTypes = [
   ];
 
 
-const dbSetting=prodDatabase
+const dbSetting=devDatabase
 
 export{dbSetting,IncomeCategory,paymentTypes}
