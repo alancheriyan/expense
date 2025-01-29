@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from './firebase'; // Adjust the import based on your firebase.js file
-import { IncomeList } from './IncomeList';
-import { dbSetting,IncomeCategory } from './dbSetting';
-import "./App.css"
+import { db } from '../DataAcess/firebase'; // Adjust the import based on your firebase.js file
+import { ExpenseList } from './ExpenseList';
+import { dbSetting } from '../DataAcess/dbSetting';
 
 const { Title } = Typography;
 
-const IncomeScreen = () => {
+const ExpenseScreen = ({categoriesCollection}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(categoriesCollection);
   const [loading, setLoading] = useState(false);
 
   // Format date to "Jan 16, 2025"
@@ -46,7 +45,7 @@ const IncomeScreen = () => {
       const endOfDay = new Date(date.setHours(23, 59, 59, 999));
 
       const expensesQuery = query(
-        collection(db, dbSetting.IncomeTable),
+        collection(db, dbSetting.ExpenseTable),
         where('date', '>=', Timestamp.fromDate(startOfDay)),
         where('date', '<=', Timestamp.fromDate(endOfDay))
       );
@@ -70,10 +69,10 @@ const IncomeScreen = () => {
     fetchExpenses(new Date(currentDate));
   }, [currentDate]);
 
-/*   const fetchCategories = async () => {
+  /* const fetchCategories = async () => {
     setLoading(true);
     try {
-      const categorysQuery = query(collection(db, dbSetting.IncomeCategoryTable));
+      const categorysQuery = query(collection(db, dbSetting.CategoryTable));
 
       const querySnapshot = await getDocs(categorysQuery);
 
@@ -81,17 +80,19 @@ const IncomeScreen = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      setCategories(IncomeCategory);
+      setCategories(categoryData);
     } catch (error) {
       console.error('Error fetching expenses:', error);
     } finally {
       setLoading(false);
     }
-  }; */
+  };
 
   useEffect(() => {
-    setCategories(IncomeCategory);
-  }, []);
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, []); */
 
   return (
     <div className="container">
@@ -129,7 +130,7 @@ const IncomeScreen = () => {
             <Spin size="large" />
           </div>
         ) : (
-          <IncomeList
+          <ExpenseList
             dataList={expenses}
             currentDate={currentDate}
             categories={categories}
@@ -140,5 +141,4 @@ const IncomeScreen = () => {
   );
 };
 
-
-export default IncomeScreen;
+export default ExpenseScreen;

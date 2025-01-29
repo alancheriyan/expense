@@ -1,8 +1,8 @@
 import React, { useState, useEffect ,lazy,Suspense} from "react";
 import { Select, Card, Row, Col,Statistic,Spin  } from "antd";
 import {  collection, getDocs ,Timestamp,where,query} from "firebase/firestore";
-import {db} from "../firebase"; 
-import { dbSetting } from "../dbSetting";
+import {db} from "../DataAcess/firebase"; 
+import { dbSetting } from "../DataAcess/dbSetting";
 
 const { Option } = Select;
 const CategoryBased = lazy(() => import("./CategoryBased"));

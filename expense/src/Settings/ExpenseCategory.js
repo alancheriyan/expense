@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Typography, Input, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { db } from "../firebase"; // Ensure this imports your initialized Firebase app
-import { dbSetting } from "../dbSetting"; // Assuming this contains the necessary table/collection name
+import { db } from "../DataAcess/firebase"; // Ensure this imports your initialized Firebase app
+import { dbSetting } from "../DataAcess/dbSetting"; // Assuming this contains the necessary table/collection name
 import {
   collection,
   addDoc,

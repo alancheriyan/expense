@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select, Button, Row, Col, Typography } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { db } from "./firebase"; // Import your Firebase configuration
+import { db } from "../DataAcess/firebase"; 
 import {
   collection,
   addDoc,
@@ -11,32 +11,30 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { dbSetting,paymentTypes } from "./dbSetting";
-import CustomizedSelectWithScrollList from "./CustomizedSelectWithScrollList"
+import { dbSetting } from "../DataAcess/dbSetting";
+import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList";
 
 const { Option } = Select;
 const { Title } = Typography;
 
-export const ExpenseList = ({ dataList, currentDate, categories }) => {
+export const IncomeList = ({ dataList, currentDate, categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
 
-
   const handleAddRow = async () => {
     try {
       const currentDateTimestamp = Timestamp.fromDate(currentDate);
-      const docRef = await addDoc(collection(db, dbSetting.ExpenseTable), {
+      const docRef = await addDoc(collection(db, dbSetting.IncomeTable), {
         amount: "",
         categoryId: "",
-        paymentTypeId: "",
         date: currentDateTimestamp,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
       });
       setItems([
         ...items,
-        { id: docRef.id, amount: "", categoryId: "", paymentTypeId: "" }, // Add row with Firebase ID
+        { id: docRef.id, amount: "", categoryId: "" }, // Add row with Firebase ID
       ]);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -47,7 +45,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
     const item = items[index];
     if (item.id) {
       try {
-        await deleteDoc(doc(db, dbSetting.ExpenseTable, item.id));
+        await deleteDoc(doc(db, dbSetting.IncomeTable, item.id));
       } catch (error) {
         console.error("Error deleting document: ", error);
       }
@@ -64,7 +62,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
     const item = updatedItems[index];
     if (item.id) {
       try {
-        await updateDoc(doc(db, dbSetting.ExpenseTable, item.id), {
+        await updateDoc(doc(db, dbSetting.IncomeTable, item.id), {
           [field]: value,
           updatedOn: serverTimestamp(),
         });
@@ -75,7 +73,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
   };
 
   useEffect(() => {
-    const total = items.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
+    const total = items.reduce((sum, income) => sum + (parseFloat(income.amount) || 0), 0);
     setTotalAmount(total);
   }, [items]);
 
@@ -97,7 +95,6 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
       <Row gutter={16} style={{ marginBottom: 10, fontWeight: "bold" }}>
         <Col span={6}><span className="delius-heading">Amount</span></Col>
         <Col span={8}><span className="delius-heading">Category</span></Col>
-        <Col span={8}><span className="delius-heading">Payment Type</span></Col>
         <Col span={2}></Col>
       </Row>
       <div
@@ -134,7 +131,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
               </Col>
               <Col span={8}>
                 <Form.Item>
-                 {/*  <Select
+                  {/* <Select
                     placeholder="Select Category"
                     value={item.categoryId}
                     className="delius-regular"
@@ -149,39 +146,14 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
                       </Option>
                     ))}
                   </Select> */}
-                  <CustomizedSelectWithScrollList 
+                   <CustomizedSelectWithScrollList 
                     data={categories} 
                     onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
                     drawerText="Select Category" 
                     defaultValue={item.categoryId}
                   />
                 </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item>
-                {/*   <Select
-                    placeholder="Select Payment Type"
-                    value={item.paymentTypeId}
-                    className="delius-regular"
-                    onChange={(value) =>
-                      handleInputChange(index, "paymentTypeId", value)
-                    }
-                    style={{ width: "100%" }}
-                  >
-                    {paymentTypes.map((type) => (
-                      <Option key={type.id} value={type.id}>
-                        {type.name}
-                      </Option>
-                    ))}
-                  </Select> */}
-                  <CustomizedSelectWithScrollList 
-                    data={paymentTypes} 
-                    onSelectedKeyChange={(key)=>handleInputChange(index, "paymentTypeId",key)} 
-                    drawerText="Select Payment Type" 
-                    defaultValue={item.paymentTypeId}
-                  />
-                </Form.Item>
-              </Col>
+              </Col> 
               <Col span={2} style={{ paddingBottom: "25px" }}>
                 <MinusCircleOutlined
                   onClick={() => handleDeleteRow(index)}
@@ -200,7 +172,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
             block
             icon={<PlusOutlined />}
           >
-            <span className="delius-regular">Add Expense</span>
+            <span className="delius-regular">Add Income</span>
           </Button>
         </Col>
       </Row>

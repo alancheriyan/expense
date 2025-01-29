@@ -7,14 +7,14 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { fetchCategories } from "./DataAccess";
+import { fetchCategories } from "./DataAcess/DataAccess";
 import './App.css';
 
 const { Content } = Layout;
 
 // Lazy-loaded components
-const ExpenseScreen = lazy(() => import("./ExpenseScreen"));
-const IncomeScreen = lazy(() => import("./IncomeScreen"));
+const ExpenseScreen = lazy(() => import("./Expense/ExpenseScreen"));
+const IncomeScreen = lazy(() => import("./Income/IncomeScreen"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
 
