@@ -2,14 +2,16 @@ const prodDatabase={
     ExpenseTable:"tblExpense",
     CategoryTable:"tblCategory",
     IncomeTable:"tblIncome",
-    IncomeCategoryTable:"tblIncomeCategory"
+    IncomeCategoryTable:"tblIncomeCategory",
+    BankingTable:"tblBanking"
 }
 
 const devDatabase={
     ExpenseTable:"tblExpense_temp",
     CategoryTable:"tblCategory_temp",
     IncomeTable:"tblIncome_temp",
-    IncomeCategoryTable:"tblIncomeCategory"
+    IncomeCategoryTable:"tblIncomeCategory",
+    BankingTable:"tblBanking_temp"
 }
 
 const IncomeCategory=[{
@@ -49,6 +51,6 @@ const paymentTypes = [
   ];
 
 
-const dbSetting=devDatabase
+const dbSetting=prodDatabase
 
 export{dbSetting,IncomeCategory,paymentTypes}

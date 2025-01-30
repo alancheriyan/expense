@@ -76,3 +76,11 @@
   margin-bottom: 4px; /* Add space between icon and label */
   font-size: 18px; /* Adjust the icon size if needed */
 }
+
+.banking-input{
+  width: 50%;
+}
+
+.banking-label{
+  font-weight: bold;
+}

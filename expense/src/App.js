@@ -8,7 +8,7 @@ import {
   BankFilled
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { fetchCategories } from "./DataAcess/DataAccess";
+import { fetchCategories,fetchBanking } from "./DataAcess/DataAccess";
 import './App.css';
 
 const { Content } = Layout;
@@ -25,6 +25,7 @@ const App = () => {
   const currentKey = location.pathname;
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [bankingData, setBankingData] = useState([]);
 
   const loadCategories = async () => {
     setLoading(true);
@@ -38,12 +39,29 @@ const App = () => {
     }
   };
 
+  const loaBankingData = async () => {
+    setLoading(true);
+    try {
+      const bankingData = await fetchBanking();
+      setBankingData(bankingData);
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadCategories();
+    loaBankingData();
   }, []);
 
   const handleCategoriesChange = (updatedCategories) => {
     setCategories(updatedCategories);
+  };
+
+  const handleBankingDataChange = (updatedBankingData) => {
+    setBankingData(updatedBankingData);
   };
 
   if(loading){
@@ -60,7 +78,7 @@ const App = () => {
              <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
              <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
              <Route path="/income" element={<IncomeScreen />} />
-             <Route path="/bankings" element={<BalanceSheet />} />
+             <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
           </Routes>
         </Suspense>
       </Content>
