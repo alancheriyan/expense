@@ -8,7 +8,7 @@ import {
   BankFilled
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { fetchCategories,fetchBanking } from "./DataAcess/DataAccess";
+import { fetchCategories,fetchBanking,backupAllTables } from "./DataAcess/DataAccess";
 import './App.css';
 
 const { Content } = Layout;
@@ -54,6 +54,7 @@ const App = () => {
   useEffect(() => {
     loadCategories();
     loaBankingData();
+    //backupAllTables();
   }, []);
 
   const handleCategoriesChange = (updatedCategories) => {

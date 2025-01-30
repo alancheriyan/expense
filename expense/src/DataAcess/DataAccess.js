@@ -1,5 +1,5 @@
-import { collection, query, getDocs,orderBy  } from 'firebase/firestore';
-import { dbSetting } from './dbSetting';
+import { collection, query, getDocs,orderBy,setDoc, doc   } from 'firebase/firestore';
+import { dbSetting,prodDatabase,devDatabase } from './dbSetting';
 import { db } from './firebase';
 
 export const fetchCategories = async () => {
@@ -34,3 +34,42 @@ export const fetchBanking = async () => {
     throw error;  
   }  
 };  
+
+
+
+const backupData = async (prodTable, devTable) => {
+  try {
+    debugger;
+    // Fetch data from production table (Firestore collection)
+    const prodTableRef = collection(db, prodTable);
+    const snapshot = await getDocs(prodTableRef);
+
+    if (!snapshot.empty) {
+      const data = {};
+      snapshot.forEach(doc => {
+        data[doc.id] = doc.data(); // Store data by document ID
+      });
+
+      // Replace data in the dev table
+      const devTableRef = collection(db, devTable);
+      for (const id in data) {
+        const devDocRef = doc(devTableRef, id); // Reference to the document in the dev collection
+        await setDoc(devDocRef, data[id]); // Set data in the dev collection
+      }
+
+      console.log(`Backup successful for ${prodTable} to ${devTable}`);
+    } else {
+      console.log(`No data found in production table: ${prodTable}`);
+    }
+  } catch (error) {
+    console.error("Error backing up data: ", error);
+  }
+};
+export const backupAllTables = async () => {
+  debugger;
+  for (const key in prodDatabase) {
+    if (prodDatabase.hasOwnProperty(key)) {
+      await backupData(prodDatabase[key], devDatabase[key]);
+    }
+  }
+}
