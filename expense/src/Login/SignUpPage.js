@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, Card, message  } from 'antd';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../DataAcess/firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { dbSetting } from '../DataAcess/dbSetting';
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +12,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
     
   const onFinish = async (values) => {
-    const { email, password, confirmPassword, role } = values;
+    const { firstName, lastName, email, password, confirmPassword, role } = values;
    
     if (password !== confirmPassword) {
       message.error("Passwords do not match!");
@@ -20,6 +20,8 @@ const SignUpPage = () => {
     }
 
     setLoading(true);
+    
+   
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -27,14 +29,21 @@ const SignUpPage = () => {
 
       // Store user details in Firestore (tbluser)
       await setDoc(doc(db, dbSetting.UserTable, user.uid), {
+        firstName,
+        lastName,
         email,
         role: role || "user",
-        createdAt: new Date(),
+        createdAt: serverTimestamp(), // Use Firebase timestamp
+        emailVerified: false,
       });
+
+
+      // Redirect after showing message
       localStorage.setItem("userId", userCredential.user.uid);
-      navigate("/");
+      navigate("/"); // Redirect to home or another page after signup
+
     } catch (error) {
-      message.error(error.message);
+      message.error(error.message);;
     }
 
     setLoading(false);
@@ -44,6 +53,12 @@ const SignUpPage = () => {
     <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>
       <Card style={{ width: 400, padding: '20px', textAlign: 'center' }} title="Sign Up">
         <Form form={form} name="signup" onFinish={onFinish} style={{ maxWidth: 300 }}>
+          <Form.Item name="firstName" rules={[{ required: true, message: 'Enter your first name!' }]}>
+            <Input placeholder="First Name" />
+          </Form.Item>
+          <Form.Item name="lastName" rules={[{ required: true, message: 'Enter your last name!' }]}>
+            <Input placeholder="Last Name" />
+          </Form.Item>
           <Form.Item name="email" rules={[{ required: true, type: "email", message: 'Enter a valid email!' }]}>
             <Input placeholder="Email" />
           </Form.Item>
