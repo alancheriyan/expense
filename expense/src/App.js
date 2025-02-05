@@ -1,5 +1,5 @@
 import React, { lazy, Suspense,useState,useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation ,Navigate} from "react-router-dom";
 import { Layout, Menu, Spin } from "antd";
 import {
   WalletOutlined,
@@ -9,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import { fetchCategories,fetchBanking,backupAllTables } from "./DataAcess/DataAccess";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./DataAcess/firebase";
 import './App.css';
 
 const { Content } = Layout;
@@ -20,12 +22,16 @@ const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
 const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
 
+const SignUpPage =lazy(() => import("./Login/SignUpPage"));
+const LoginPage =lazy(() => import("./Login/LoginPage"));
+
 const App = () => {
   const location = useLocation();
   const currentKey = location.pathname;
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [bankingData, setBankingData] = useState([]);
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
 
   const loadCategories = async () => {
     setLoading(true);
@@ -55,6 +61,18 @@ const App = () => {
     loadCategories();
     loaBankingData();
     //backupAllTables();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        localStorage.setItem("userId", currentUser.uid);
+        setUserId(currentUser.uid);
+      } else {
+        localStorage.removeItem("userId");
+        setUserId(null);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleCategoriesChange = (updatedCategories) => {
@@ -75,15 +93,27 @@ const App = () => {
       <Content style={{ padding: "16px", flex: 1 }}>
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
           <Routes>
-            <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
-             <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
-             <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
-             <Route path="/income" element={<IncomeScreen />} />
-             <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
+            {!userId ? (
+              <>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="*" element={<Navigate to="/login" />} />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
+                <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
+                <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
+                <Route path="/income" element={<IncomeScreen />} />
+                <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </>
+            )}
           </Routes>
         </Suspense>
       </Content>
-      <Menu
+
+     {userId && ( <Menu
   theme="light"
   mode="horizontal"
   selectedKeys={[currentKey]}
@@ -177,7 +207,10 @@ const App = () => {
     </Link>
   </Menu.Item>
  
-</Menu>
+</Menu>)
+
+     } 
+     
     </Layout>
   );
 };

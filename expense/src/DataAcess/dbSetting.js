@@ -3,7 +3,8 @@ const prodDatabase={
     CategoryTable:"tblCategory",
     IncomeTable:"tblIncome",
     IncomeCategoryTable:"tblIncomeCategory",
-    BankingTable:"tblBanking"
+    BankingTable:"tblBanking",
+    UserTable:"tblUser"
 }
 
 const devDatabase={
@@ -11,7 +12,8 @@ const devDatabase={
     CategoryTable:"tblCategory_temp",
     IncomeTable:"tblIncome_temp",
     IncomeCategoryTable:"tblIncomeCategory",
-    BankingTable:"tblBanking_temp"
+    BankingTable:"tblBanking_temp",
+    UserTable:"tblUser_temp"
 }
 
 const IncomeCategory=[{
