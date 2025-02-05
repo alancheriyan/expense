@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Row, Col, Typography } from "antd";
+import { Form, Input, Button, Row, Col, Typography } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "../DataAcess/firebase"; // Import your Firebase configuration
 import {
@@ -14,14 +14,13 @@ import {
 import { dbSetting,paymentTypes } from "../DataAcess/dbSetting";
 import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList"
 
-const { Option } = Select;
 const { Title } = Typography;
 
 export const ExpenseList = ({ dataList, currentDate, categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
-
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
 
   const handleAddRow = async () => {
     try {
@@ -33,6 +32,7 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
         date: currentDateTimestamp,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
+        userId:userId,
       });
       setItems([
         ...items,
@@ -59,7 +59,6 @@ export const ExpenseList = ({ dataList, currentDate, categories }) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
     setItems(updatedItems);
-
     // Update Firestore document
     const item = updatedItems[index];
     if (item.id) {

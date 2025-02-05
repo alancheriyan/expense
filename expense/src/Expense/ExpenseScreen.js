@@ -69,30 +69,6 @@ const ExpenseScreen = ({categoriesCollection}) => {
     fetchExpenses(new Date(currentDate));
   }, [currentDate]);
 
-  /* const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const categorysQuery = query(collection(db, dbSetting.CategoryTable));
-
-      const querySnapshot = await getDocs(categorysQuery);
-
-      const categoryData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setCategories(categoryData);
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (categories.length === 0) {
-      fetchCategories();
-    }
-  }, []); */
 
   return (
     <div className="container">

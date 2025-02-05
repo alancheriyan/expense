@@ -16,7 +16,7 @@ const { Title } = Typography;
 const ExpenseCategory = ({ data,onCategoriesChange  }) => {
   
   const [categories, setCategories] = useState(data || []);
-
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
   // Handle input changes
   const handleInputChange = (id, value) => {
     const updatedCategories = categories.map((category) =>
@@ -67,6 +67,7 @@ const ExpenseCategory = ({ data,onCategoriesChange  }) => {
           name: category.name,
           isActive:true,
           updatedOn: serverTimestamp(),
+          userId:userId
         });
 
         onCategoriesChange(updatedCategories);

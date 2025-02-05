@@ -111,7 +111,7 @@ const CustomizedSelectWithScrollList = ({
               <div
                 key={item.id}
                 data-value={item.name}
-                onClick={() => handleSelect(item.key)}
+                onClick={() => handleSelect(item.id)}
                 className={`custom-scroll-list-item ${
                   selectedValue === item.name ? "selected" : ""
                 }`}

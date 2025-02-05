@@ -21,6 +21,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
 
   const handleAddRow = async () => {
     try {
@@ -31,6 +32,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
         date: currentDateTimestamp,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
+        userId:userId
       });
       setItems([
         ...items,

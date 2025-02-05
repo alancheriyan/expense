@@ -69,7 +69,6 @@ const App = () => {
         localStorage.removeItem("userId");
         setUserId(null);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
