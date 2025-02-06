@@ -4,11 +4,12 @@ const prodDatabase={
     IncomeTable:"tblIncome",
     IncomeCategoryTable:"tblIncomeCategory",
     BankingTable:"tblBanking",
-    UserTable:"tblUser"
+    UserTable:"tblUser",
+    PaymentTypeTable:"tblPaymentType"
 }
 
 const devDatabase={
-    ExpenseTable:"tblExpense_temp",
+    ExpenseTable:"tblExpense_temps",
     CategoryTable:"tblCategory_temp",
     IncomeTable:"tblIncome_temp",
     IncomeCategoryTable:"tblIncomeCategory",

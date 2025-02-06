@@ -1,4 +1,4 @@
-import { collection, query, getDocs,orderBy,setDoc, doc   } from 'firebase/firestore';
+import { collection, query, getDocs,orderBy,setDoc, doc,updateDoc ,serverTimestamp  } from 'firebase/firestore';
 import { dbSetting,prodDatabase,devDatabase } from './dbSetting';
 import { db } from './firebase';
 
@@ -35,6 +35,40 @@ export const fetchBanking = async () => {
   }  
 };  
 
+
+export const fetchPaymentType = async () => {  
+  try {  
+    const PaymentQuery = query(
+      collection(db, dbSetting.PaymentTypeTable)
+    );  
+    const querySnapshot = await getDocs(PaymentQuery);  
+
+    return querySnapshot.docs.map((doc) => ({  
+      id: doc.id,  
+      ...doc.data(),  
+    }));  
+  } catch (error) {  
+    console.error("Error fetching payment Type data:", error);  
+    throw error;  
+  }  
+};  
+
+export const fetchIncomeType = async () => {  
+  try {  
+    const IncomeQuery = query(
+      collection(db, dbSetting.IncomeTable)
+    );  
+    const querySnapshot = await getDocs(IncomeQuery);  
+
+    return querySnapshot.docs.map((doc) => ({  
+      id: doc.id,  
+      ...doc.data(),  
+    }));  
+  } catch (error) {  
+    console.error("Error fetching Income Type data:", error);  
+    throw error;  
+  }  
+};  
 
 
 const backupData = async (prodTable, devTable) => {
@@ -73,3 +107,41 @@ export const backupAllTables = async () => {
     }
   }
 }
+
+
+const updateData = async (prodTable) => {
+  try {
+    debugger;
+    // Fetch data from production table (Firestore collection)
+    const prodTableRef = collection(db, prodTable);
+    const snapshot = await getDocs(prodTableRef);
+
+    if (!snapshot.empty) {
+      // Loop through documents and update each one
+      snapshot.docs.forEach(async (docSnap) => {
+        const docRef = doc(db, prodTable, docSnap.id); // Get reference to the document
+
+        // Add the new field 'userId' to the document
+        await updateDoc(docRef, {
+          userId: "owN4B10qKbWVxbDzVl2LaXLT1zD3",  // New field
+          updatedOn: serverTimestamp() // Optional timestamp
+        });
+
+        console.log(`Updated document ${docSnap.id} in ${prodTable}`);
+      });
+    } else {
+      console.log(`No data found in production table: ${prodTable}`);
+    }
+  } catch (error) {
+    console.error("Error updating data: ", error);
+  }
+};
+
+export const updateAllTables = async () => {
+  debugger;
+  for (const key in prodDatabase) {
+    if (Object.hasOwn(prodDatabase, key)) {
+      await updateData(prodDatabase[key]);
+    }
+  }
+};

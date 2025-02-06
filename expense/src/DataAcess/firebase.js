@@ -5,12 +5,12 @@ import {getFirestore} from "firebase/firestore"
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyALE4sPJ-Wp6r39sY_zEjkFLrITpYD874k",
-  authDomain: "expense-dailytracker.firebaseapp.com",
-  projectId: "expense-dailytracker",
-  storageBucket: "expense-dailytracker.firebasestorage.app",
-  messagingSenderId: "840591655633",
-  appId: "1:840591655633:web:cc4301a615216139583bf0"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECTID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGEBUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGINGSENDER_ID,
+  appId:process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 

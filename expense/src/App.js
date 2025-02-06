@@ -8,7 +8,7 @@ import {
   BankFilled
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { fetchCategories,fetchBanking,backupAllTables } from "./DataAcess/DataAccess";
+import { fetchCategories,fetchBanking,fetchPaymentType,fetchIncomeType} from "./DataAcess/DataAccess";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
 import './App.css';
@@ -29,6 +29,8 @@ const App = () => {
   const location = useLocation();
   const currentKey = location.pathname;
   const [categories, setCategories] = useState([]);
+  const [paymentTypes, setPaymentTypes] = useState([]);
+  const [incomeTypes, setIncomeTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [bankingData, setBankingData] = useState([]);
   const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
@@ -57,14 +59,42 @@ const App = () => {
     }
   };
 
+  const loadPaymentType = async () => {
+    setLoading(true);
+    try {
+      const paymentTypeData = await fetchPaymentType();
+      setPaymentTypes(paymentTypeData);
+    } catch (error) {
+      console.error('Error loading Payment Type:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadIncomeType = async () => {
+    setLoading(true);
+    try {
+      const incomeTypeData = await fetchIncomeType();
+      setIncomeTypes(incomeTypeData);
+    } catch (error) {
+      console.error('Error loading Income Type:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    loadCategories();
-    loaBankingData();
-    //backupAllTables();
+    
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         localStorage.setItem("userId", currentUser.uid);
         setUserId(currentUser.uid);
+        loadCategories();
+        loaBankingData();
+        loadPaymentType();
+        loadIncomeType();
+    //backupAllTables();
+    //updateAllTables();
       } else {
         localStorage.removeItem("userId");
         setUserId(null);
@@ -80,6 +110,14 @@ const App = () => {
 
   const handleBankingDataChange = (updatedBankingData) => {
     setBankingData(updatedBankingData);
+  };
+
+  const handlePaymentTypeChange = (updatedPaymentTypes) => {
+    setPaymentTypes(updatedPaymentTypes);
+  };
+
+  const handleIncomeTypeChange = (updatedIncomeTypes) => {
+    setIncomeTypes(updatedIncomeTypes);
   };
 
   if(loading){
@@ -102,7 +140,9 @@ const App = () => {
               <>
                 <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
                 <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
-                <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} />} />
+                <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} 
+                paymentTypeCollection={paymentTypes} onPaymentTypeChange={handlePaymentTypeChange}  
+                incomeTypeCollection={incomeTypes} onIncomeTypeChange={handleIncomeTypeChange}/>} />
                 <Route path="/income" element={<IncomeScreen />} />
                 <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
                 <Route path="*" element={<Navigate to="/" />} />
