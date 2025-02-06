@@ -4,6 +4,7 @@ import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore
 import { db } from '../DataAcess/firebase'; // Adjust the import based on your firebase.js file
 import { ExpenseList } from './ExpenseList';
 import { dbSetting } from '../DataAcess/dbSetting';
+import { fetchExpenses } from '../DataAcess/DataAccess';
 
 const { Title } = Typography;
 
@@ -38,7 +39,7 @@ const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
   };
 
   // Fetch expenses from Firestore
-  const fetchExpenses = async (date) => {
+  /* const fetchExpenses = async (date) => {
     setLoading(true);
     try {
       const startOfDay = new Date(date.setHours(0, 0, 0, 0));
@@ -63,10 +64,22 @@ const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
     } finally {
       setLoading(false);
     }
-  };
+  }; */
+
+    const fetchExpenseData = async (date) => {
+      setLoading(true);
+      try {
+        const expensesData = await fetchExpenses(date);
+        setExpenses(expensesData);
+      } catch (error) {
+        console.error('Error expense load:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
-    fetchExpenses(new Date(currentDate));
+    fetchExpenseData(new Date(currentDate));
   }, [currentDate]);
 
 

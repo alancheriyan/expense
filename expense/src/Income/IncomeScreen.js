@@ -3,7 +3,8 @@ import { Button, Typography, Row, Col, Spin } from 'antd';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { db } from '../DataAcess/firebase'; // Adjust the import based on your firebase.js file
 import { IncomeList } from './IncomeList';
-import { dbSetting,IncomeCategory } from '../DataAcess/dbSetting';
+import { dbSetting } from '../DataAcess/dbSetting';
+import { fetchIncome } from '../DataAcess/DataAccess';
 
 const { Title } = Typography;
 
@@ -37,7 +38,7 @@ const IncomeScreen = ({incomeType}) => {
     });
   };
 
-  // Fetch expenses from Firestore
+  /* // Fetch expenses from Firestore
   const fetchExpenses = async (date) => {
     setLoading(true);
     try {
@@ -64,9 +65,23 @@ const IncomeScreen = ({incomeType}) => {
       setLoading(false);
     }
   };
+  
+ */
+
+   const fetchIncomeData = async (date) => {
+        setLoading(true);
+        try {
+          const expensesData = await fetchIncome(date);
+          setExpenses(expensesData);
+        } catch (error) {
+          console.error('Error Income load:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
   useEffect(() => {
-    fetchExpenses(new Date(currentDate));
+    fetchIncomeData(new Date(currentDate));
   }, [currentDate]);
 
 /*   const fetchCategories = async () => {
