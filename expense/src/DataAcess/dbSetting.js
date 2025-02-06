@@ -5,7 +5,8 @@ const prodDatabase={
     IncomeCategoryTable:"tblIncomeCategory",
     BankingTable:"tblBanking",
     UserTable:"tblUser",
-    PaymentTypeTable:"tblPaymentType"
+    PaymentTypeTable:"tblPaymentType",
+    IncomeTypeTable:"tblIncomeType"
 }
 
 const devDatabase={

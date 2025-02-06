@@ -138,12 +138,12 @@ const App = () => {
               </>
             ) : (
               <>
-                <Route path="/" element={<ExpenseScreen categoriesCollection={categories}/>} />
+                <Route path="/" element={<ExpenseScreen categoriesCollection={categories} paymentTypeCollection={paymentTypes}/>} />
                 <Route path="/summary" element={<SummaryScreen categoriesCollection={categories} />} />
                 <Route path="/settings" element={<Setting categoriesCollection={categories}  onCategoriesChange={handleCategoriesChange} 
                 paymentTypeCollection={paymentTypes} onPaymentTypeChange={handlePaymentTypeChange}  
                 incomeTypeCollection={incomeTypes} onIncomeTypeChange={handleIncomeTypeChange}/>} />
-                <Route path="/income" element={<IncomeScreen />} />
+                <Route path="/income" element={<IncomeScreen incomeType={incomeTypes}/>} />
                 <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </>

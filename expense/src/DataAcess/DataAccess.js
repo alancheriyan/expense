@@ -56,7 +56,7 @@ export const fetchPaymentType = async () => {
 export const fetchIncomeType = async () => {  
   try {  
     const IncomeQuery = query(
-      collection(db, dbSetting.IncomeTable)
+      collection(db, dbSetting.IncomeTypeTable)
     );  
     const querySnapshot = await getDocs(IncomeQuery);  
 

@@ -7,7 +7,7 @@ import { dbSetting } from '../DataAcess/dbSetting';
 
 const { Title } = Typography;
 
-const ExpenseScreen = ({categoriesCollection}) => {
+const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState(categoriesCollection);
@@ -110,6 +110,7 @@ const ExpenseScreen = ({categoriesCollection}) => {
             dataList={expenses}
             currentDate={currentDate}
             categories={categories}
+            paymentTypes={paymentTypeCollection}
           />
         )}
       </div>

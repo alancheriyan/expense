@@ -11,12 +11,12 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { dbSetting,paymentTypes } from "../DataAcess/dbSetting";
+import { dbSetting } from "../DataAcess/dbSetting";
 import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList"
 
 const { Title } = Typography;
 
-export const ExpenseList = ({ dataList, currentDate, categories }) => {
+export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);

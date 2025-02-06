@@ -7,10 +7,10 @@ import { dbSetting,IncomeCategory } from '../DataAcess/dbSetting';
 
 const { Title } = Typography;
 
-const IncomeScreen = () => {
+const IncomeScreen = ({incomeType}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(incomeType);
   const [loading, setLoading] = useState(false);
 
   // Format date to "Jan 16, 2025"
@@ -87,10 +87,6 @@ const IncomeScreen = () => {
       setLoading(false);
     }
   }; */
-
-  useEffect(() => {
-    setCategories(IncomeCategory);
-  }, []);
 
   return (
     <div className="container">

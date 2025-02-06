@@ -31,7 +31,7 @@ const IncomeType = ({ data, onIncomeTypeChange }) => {
 
   const handleAddRow = async () => {
     try {
-      const docRef = await addDoc(collection(db, dbSetting.IncomeTable), {
+      const docRef = await addDoc(collection(db, dbSetting.IncomeTypeTable), {
         name: "",
         isActive: true,
         createdOn: serverTimestamp(),
@@ -58,7 +58,7 @@ const IncomeType = ({ data, onIncomeTypeChange }) => {
       setIncomeTypes(updatedIncomeTypes);
 
       try {
-        await updateDoc(doc(db, dbSetting.IncomeTable, incomeType.id), {
+        await updateDoc(doc(db, dbSetting.IncomeTypeTable, incomeType.id), {
           name: incomeType.name,
           isActive: true,
           updatedOn: serverTimestamp(),
