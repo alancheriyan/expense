@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import ExpenseCategory from "./ExpenseCategory";
-import { Typography, Button, Card, Divider, Row, Col } from "antd";
+import React, { useState, Suspense } from "react";
+import { Typography, Button, Card, Divider, Row, Col, Spin } from "antd";
 import { auth } from "../DataAcess/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import PaymentType from "./PaymentType";
-import IncomeType from "./IncomeType";
+
+// Lazy loading the components
+const ExpenseCategory = React.lazy(() => import("./ExpenseCategory"));
+const PaymentType = React.lazy(() => import("./PaymentType"));
+const IncomeType = React.lazy(() => import("./IncomeType"));
 
 const { Title } = Typography;
 
-const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCollection, onPaymentTypeChange,incomeTypeCollection,onIncomeTypeChange }) => {
+const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCollection, onPaymentTypeChange, incomeTypeCollection, onIncomeTypeChange }) => {
   const navigate = useNavigate();
   const [activeComponent, setActiveComponent] = useState(null);
 
@@ -66,23 +68,32 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
       )}
 
       {/* Show selected component and hide settings */}
-      {activeComponent === "ExpenseCategory" && (
-        <div style={{ marginTop: "50px" }}><ExpenseCategory data={categoriesCollection} onCategoriesChange={onCategoriesChange} /></div> 
+      {activeComponent && (
+        <Suspense fallback={<Spin tip="Loading..." />}>
+          {activeComponent === "ExpenseCategory" && (
+            <div style={{ marginTop: "50px" }}>
+              <ExpenseCategory data={categoriesCollection} onCategoriesChange={onCategoriesChange} />
+            </div>
+          )}
+          {activeComponent === "PaymentType" && (
+            <div style={{ marginTop: "50px" }}>
+              <PaymentType data={paymentTypeCollection} onPaymentTypeChange={onPaymentTypeChange} />
+            </div>
+          )}
+          {activeComponent === "IncomeType" && (
+            <div style={{ marginTop: "50px" }}>
+              <IncomeType dataset={incomeTypeCollection} onIncomeTypeChange={onIncomeTypeChange} />
+            </div>
+          )}
+        </Suspense>
       )}
-      {activeComponent === "PaymentType" && (
-        <div style={{ marginTop: "50px" }}><PaymentType data={paymentTypeCollection} onPaymentTypeChange={onPaymentTypeChange} /></div> 
-      )}
-       {activeComponent === "IncomeType" && (
-        <div style={{ marginTop: "50px" }}><IncomeType data={incomeTypeCollection} onIncomeTypeChange={onIncomeTypeChange} /></div> 
-      )}
-     
 
       {/* Logout Button only appears if no component is selected */}
       {!activeComponent && (
         <Button 
           type="primary" 
           danger 
-          style={{ width: "100%", padding: "10px", fontSize: "16px",marginTop:"20px" }} 
+          style={{ width: "100%", padding: "10px", fontSize: "16px", marginTop: "20px" }} 
           onClick={handleLogout}
           className="delius-regular"
         >

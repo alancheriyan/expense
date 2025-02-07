@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
-import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from '../DataAcess/firebase'; // Adjust the import based on your firebase.js file
 import { ExpenseList } from './ExpenseList';
-import { dbSetting } from '../DataAcess/dbSetting';
 import { fetchExpenses } from '../DataAcess/DataAccess';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCategories } from '../redux/expensecategorySlice'; // Import the action to fetch income types
 
 const { Title } = Typography;
 
-const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
+const ExpenseScreen = ({paymentTypeCollection}) => {
+  const dispatch = useDispatch();
+  
+  const { data: categories = [], loading: categoriesLoading } = useSelector(
+    (state) => state.categories
+  );
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState(categoriesCollection);
+  
   const [loading, setLoading] = useState(false);
 
-  // Format date to "Jan 16, 2025"
+
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
@@ -38,33 +43,7 @@ const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
     });
   };
 
-  // Fetch expenses from Firestore
-  /* const fetchExpenses = async (date) => {
-    setLoading(true);
-    try {
-      const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-      const endOfDay = new Date(date.setHours(23, 59, 59, 999));
-
-      const expensesQuery = query(
-        collection(db, dbSetting.ExpenseTable),
-        where('date', '>=', Timestamp.fromDate(startOfDay)),
-        where('date', '<=', Timestamp.fromDate(endOfDay))
-      );
-
-      const querySnapshot = await getDocs(expensesQuery);
-
-      const expensesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setExpenses(expensesData);
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-    } finally {
-      setLoading(false);
-    }
-  }; */
+ 
 
     const fetchExpenseData = async (date) => {
       setLoading(true);
@@ -78,10 +57,11 @@ const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
       }
     };
 
-  useEffect(() => {
-    fetchExpenseData(new Date(currentDate));
-  }, [currentDate]);
 
+    useEffect(() => {
+      dispatch(fetchCategories()); 
+      fetchExpenseData(new Date(currentDate));
+    }, [currentDate, dispatch]);
 
   return (
     <div className="container">
@@ -114,7 +94,7 @@ const ExpenseScreen = ({categoriesCollection,paymentTypeCollection}) => {
       </Row>
 
       <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
-        {loading ? (
+        {categoriesLoading || loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <Spin size="large" />
           </div>

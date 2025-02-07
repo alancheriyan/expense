@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
-import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { db } from '../DataAcess/firebase'; // Adjust the import based on your firebase.js file
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchIncomeTypes } from '../redux/incomeTypeSlice'; // Import the action to fetch income types
 import { IncomeList } from './IncomeList';
-import { dbSetting } from '../DataAcess/dbSetting';
 import { fetchIncome } from '../DataAcess/DataAccess';
 
 const { Title } = Typography;
 
-const IncomeScreen = ({incomeType}) => {
+const IncomeScreen = () => {
+  const dispatch = useDispatch();
+  
+  // Use useSelector to get incomeType data from Redux store
+  const { data: incomeTypes = [], loading: incomeTypesLoading } = useSelector(
+    (state) => state.incomeTypes
+  );
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState(incomeType);
   const [loading, setLoading] = useState(false);
 
   // Format date to "Jan 16, 2025"
@@ -38,70 +43,23 @@ const IncomeScreen = ({incomeType}) => {
     });
   };
 
-  /* // Fetch expenses from Firestore
-  const fetchExpenses = async (date) => {
+  const fetchIncomeData = async (date) => {
     setLoading(true);
     try {
-      const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-      const endOfDay = new Date(date.setHours(23, 59, 59, 999));
-
-      const expensesQuery = query(
-        collection(db, dbSetting.IncomeTable),
-        where('date', '>=', Timestamp.fromDate(startOfDay)),
-        where('date', '<=', Timestamp.fromDate(endOfDay))
-      );
-
-      const querySnapshot = await getDocs(expensesQuery);
-
-      const expensesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
+      const expensesData = await fetchIncome(date);
       setExpenses(expensesData);
     } catch (error) {
-      console.error('Error fetching expenses:', error);
+      console.error('Error Income load:', error);
     } finally {
       setLoading(false);
     }
   };
-  
- */
 
-   const fetchIncomeData = async (date) => {
-        setLoading(true);
-        try {
-          const expensesData = await fetchIncome(date);
-          setExpenses(expensesData);
-        } catch (error) {
-          console.error('Error Income load:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
+  // Fetch income data on current date change
   useEffect(() => {
+    dispatch(fetchIncomeTypes()); // Fetch income types from Redux on mount
     fetchIncomeData(new Date(currentDate));
-  }, [currentDate]);
-
-/*   const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const categorysQuery = query(collection(db, dbSetting.IncomeCategoryTable));
-
-      const querySnapshot = await getDocs(categorysQuery);
-
-      const categoryData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setCategories(IncomeCategory);
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-    } finally {
-      setLoading(false);
-    }
-  }; */
+  }, [currentDate, dispatch]); // Dependency on currentDate and dispatch
 
   return (
     <div className="container">
@@ -134,7 +92,7 @@ const IncomeScreen = ({incomeType}) => {
       </Row>
 
       <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
-        {loading ? (
+        {incomeTypesLoading || loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <Spin size="large" />
           </div>
@@ -142,13 +100,12 @@ const IncomeScreen = ({incomeType}) => {
           <IncomeList
             dataList={expenses}
             currentDate={currentDate}
-            categories={categories}
+            categories={incomeTypes} // Pass incomeTypes to IncomeList
           />
         )}
       </div>
     </div>
   );
 };
-
 
 export default IncomeScreen;

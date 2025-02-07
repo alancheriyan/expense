@@ -8,7 +8,7 @@ import {
   BankFilled
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
-import { fetchCategories,fetchBanking,fetchPaymentType,fetchIncomeType} from "./DataAcess/DataAccess";
+import { fetchBanking,fetchPaymentType} from "./DataAcess/DataAccess";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
 import './App.css';
@@ -35,18 +35,6 @@ const App = () => {
   const [bankingData, setBankingData] = useState([]);
   const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
 
-  const loadCategories = async () => {
-    setLoading(true);
-    try {
-      const categoryData = await fetchCategories();
-      setCategories(categoryData);
-    } catch (error) {
-      console.error('Error loading categories:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loaBankingData = async () => {
     setLoading(true);
     try {
@@ -71,28 +59,16 @@ const App = () => {
     }
   };
 
-  const loadIncomeType = async () => {
-    setLoading(true);
-    try {
-      const incomeTypeData = await fetchIncomeType();
-      setIncomeTypes(incomeTypeData);
-    } catch (error) {
-      console.error('Error loading Income Type:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         localStorage.setItem("userId", currentUser.uid);
         setUserId(currentUser.uid);
-        loadCategories();
+     //   loadCategories();
         loaBankingData();
         loadPaymentType();
-        loadIncomeType();
+     //   loadIncomeType();
     //backupAllTables();
     //updateAllTables();
       } else {

@@ -1,99 +1,48 @@
-import React, { useState } from "react";
-import { Typography, Input, Button, message } from "antd";
+import React, { useEffect } from "react";
+import { Typography, Input, Button, message, Spin } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { db } from "../DataAcess/firebase"; // Ensure this imports your initialized Firebase app
-import { dbSetting } from "../DataAcess/dbSetting"; // Assuming this contains the necessary table/collection name
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchIncomeTypes, updateIncomeType, addIncomeType } from "../redux/incomeTypeSlice";
 
 const { Title } = Typography;
 
-const IncomeType = ({ data, onIncomeTypeChange }) => {
-  const [incomeTypes, setIncomeTypes] = useState(data || []);
-  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+const IncomeType = () => {
+  const dispatch = useDispatch();
+  const { data: incomeTypes = [], loading, error } = useSelector((state) => state.incomeTypes);
+
+  useEffect(() => {
+    dispatch(fetchIncomeTypes());
+  }, [dispatch]);
 
   const handleInputChange = (id, value) => {
-    const updatedIncomeTypes = incomeTypes.map((incomeType) =>
-      incomeType.id === id ? { ...incomeType, name: value } : incomeType
-    );
-    setIncomeTypes(updatedIncomeTypes);
-
-    const incomeType = updatedIncomeTypes.find((cat) => cat.id === id);
-    if (incomeType) {
-      saveIncomeType(incomeType);
-    }
+    dispatch(updateIncomeType({ id, name: value }));
   };
 
-  const handleAddRow = async () => {
-    try {
-      const docRef = await addDoc(collection(db, dbSetting.IncomeTypeTable), {
-        name: "",
-        isActive: true,
-        createdOn: serverTimestamp(),
-        updatedOn: serverTimestamp(),
-      });
-
-      setIncomeTypes((prevIncomeTypes) => [
-        ...prevIncomeTypes,
-        { id: docRef.id, name: "" },
-      ]);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
-
-  const saveIncomeType = async (incomeType) => {
-    const updatedIncomeTypes = [...incomeTypes];
-    const incomeTypeToUpdate = updatedIncomeTypes.find(
-      (cat) => cat.id === incomeType.id
-    );
-
-    if (incomeTypeToUpdate) {
-      incomeTypeToUpdate.name = incomeType.name;
-      setIncomeTypes(updatedIncomeTypes);
-
-      try {
-        await updateDoc(doc(db, dbSetting.IncomeTypeTable, incomeType.id), {
-          name: incomeType.name,
-          isActive: true,
-          updatedOn: serverTimestamp(),
-          userId: userId,
-        });
-
-        onIncomeTypeChange(updatedIncomeTypes);
-      } catch (error) {
-        console.error("Error updating document: ", error);
-        message.error(`Failed to update Income Type: ${incomeType.name}`);
-      }
-    }
+  const handleAddRow = () => {
+    dispatch(addIncomeType());
   };
 
   return (
     <div>
-      <Title
-        style={{ marginBottom: "20px", fontSize: "10px" }}
-        className="delius-swash-caps-regular"
-      >
+      <Title style={{ marginBottom: "20px", fontSize: "10px" }} className="delius-swash-caps-regular">
         Income Type
       </Title>
 
-      <div style={{ marginBottom: "20px" }}>
-        {incomeTypes.map((incomeType) => (
-          <Input
-            key={incomeType.id}
-            value={incomeType.name}
-            onChange={(e) => handleInputChange(incomeType.id, e.target.value)}
-            placeholder="Enter Income Type"
-            style={{ marginBottom: "10px" }}
-            className="delius-regular"
-          />
-        ))}
-      </div>
+      {/* Wrap the content in Spin to show a loading state */}
+     
+        <div style={{ marginBottom: "20px" }}>
+          {incomeTypes.map((incomeType) => (
+            <Input
+              key={incomeType.id}
+              value={incomeType.name}
+              onChange={(e) => handleInputChange(incomeType.id, e.target.value)}
+              placeholder="Enter Income Type"
+              style={{ marginBottom: "10px" }}
+              className="delius-regular"
+            />
+          ))}
+        </div>
+      
 
       <Button
         type="dashed"
