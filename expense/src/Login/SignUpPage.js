@@ -35,12 +35,15 @@ const SignUpPage = () => {
         role: role || "user",
         createdAt: serverTimestamp(), // Use Firebase timestamp
         emailVerified: false,
+        setupProfile:false
       });
 
 
       // Redirect after showing message
+      localStorage.setItem("user", JSON.stringify(userCredential.user));
       localStorage.setItem("userId", userCredential.user.uid);
-      navigate("/"); // Redirect to home or another page after signup
+      localStorage.setItem("setupProfile", "false");
+      navigate("/setup"); // Redirect to home or another page after signup
 
     } catch (error) {
       message.error(error.message);;

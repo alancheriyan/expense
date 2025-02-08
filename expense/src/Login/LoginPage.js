@@ -25,6 +25,9 @@ const LoginPage = () => {
       const userDoc = await getDoc(doc(db, dbSetting.UserTable, user.uid));
       if (userDoc.exists()) {
         localStorage.setItem("userId", user.uid);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("userId", user.uid);
+        localStorage.setItem("setupProfile", user.setupProfile);
         navigate("/"); // Redirect to Expense
       } else {
         message.error("User role not found!");
