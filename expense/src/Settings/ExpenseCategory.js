@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Typography, Input, Button, Spin, message } from "antd";
+import { Typography, Input, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories, updateCategory, addCategory } from "../redux/expensecategorySlice";
+import { subscribeToCategories, updateCategory, addCategory } from "../redux/expensecategorySlice";
 
 const { Title } = Typography;
 
@@ -11,7 +11,8 @@ const ExpenseCategory = () => {
   const { data: categories = [], loading, error } = useSelector((state) => state.categories);
 
   useEffect(() => {
-    dispatch(fetchCategories());
+    const unsubscribe = dispatch(subscribeToCategories()); // Subscribe to real-time updates
+    return () => unsubscribe(); // Cleanup on unmount
   }, [dispatch]);
 
   useEffect(() => {

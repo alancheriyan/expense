@@ -3,15 +3,20 @@ import { Button, Typography, Row, Col, Spin } from 'antd';
 import { ExpenseList } from './ExpenseList';
 import { fetchExpenses } from '../DataAcess/DataAccess';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCategories } from '../redux/expensecategorySlice'; // Import the action to fetch income types
+import {subscribeToCategories } from '../redux/expensecategorySlice';
+import {subscribeToPaymentTypes } from '../redux/paymentTypeSlice';
+
 
 const { Title } = Typography;
 
-const ExpenseScreen = ({paymentTypeCollection}) => {
+const ExpenseScreen = () => {
   const dispatch = useDispatch();
   
   const { data: categories = [], loading: categoriesLoading } = useSelector(
     (state) => state.categories
+  );
+  const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector(
+    (state) => state.paymentTypes
   );
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -59,9 +64,18 @@ const ExpenseScreen = ({paymentTypeCollection}) => {
 
 
     useEffect(() => {
-      dispatch(fetchCategories()); 
       fetchExpenseData(new Date(currentDate));
-    }, [currentDate, dispatch]);
+    }, [currentDate]);
+
+    useEffect(() => {
+      const unsubscribeCategories = dispatch(subscribeToCategories());
+      const unsubscribePayments = dispatch(subscribeToPaymentTypes());
+  
+      return () => {
+        unsubscribeCategories();
+        unsubscribePayments(); // ✅ Properly unsubscribing
+      };
+    }, [dispatch]);
 
   return (
     <div className="container">
@@ -94,7 +108,7 @@ const ExpenseScreen = ({paymentTypeCollection}) => {
       </Row>
 
       <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
-        {categoriesLoading || loading ? (
+        {paymentTypesLoading || categoriesLoading || loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <Spin size="large" />
           </div>
@@ -103,7 +117,7 @@ const ExpenseScreen = ({paymentTypeCollection}) => {
             dataList={expenses}
             currentDate={currentDate}
             categories={categories}
-            paymentTypes={paymentTypeCollection}
+            paymentTypes={paymentTypes}
           />
         )}
       </div>

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Typography, Input, Button, message, Spin } from "antd";
+import { Typography, Input, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchIncomeTypes, updateIncomeType, addIncomeType } from "../redux/incomeTypeSlice";
+import { subscribeToIncomeTypes, updateIncomeType, addIncomeType } from "../redux/incomeTypeSlice";
 
 const { Title } = Typography;
 
@@ -11,7 +11,8 @@ const IncomeType = () => {
   const { data: incomeTypes = [], loading, error } = useSelector((state) => state.incomeTypes);
 
   useEffect(() => {
-    dispatch(fetchIncomeTypes());
+    const unsubscribe = dispatch(subscribeToIncomeTypes()); // Subscribe to real-time updates
+    return () => unsubscribe(); // Cleanup on unmount
   }, [dispatch]);
 
   const handleInputChange = (id, value) => {

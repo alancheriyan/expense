@@ -1,26 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Progress, Card } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { subscribeToCategories } from "../redux/expensecategorySlice";
 
-const CategoryBased = ({ data, categoriesCollection, totalExpense }) => {
-  // Utility function to calculate category stats
-  const calculateCategoryStats = (data, categoriesCollection, totalExpense) => {
+const CategoryBased = ({ data, totalExpense }) => {
+  const dispatch = useDispatch();
+    
+  const { data: categories = [], loading: categoriesLoading } = useSelector(
+    (state) => state.categories
+  );
+
+  useEffect(() => {
+    const unsubscribe = dispatch(subscribeToCategories());
+    console.log("Subscribed to categories...");
+
+    return () => {
+      console.log("Unsubscribing from categories...");
+      unsubscribe();
+    };
+  }, [dispatch]);
+
+  const calculateCategoryStats = (data, categories, totalExpense) => {
     const categoryTotals = {};
     const unknownCategoryId = "unknown";
-  
-    // Add the "Unknown" category to the collection if it doesn't exist
+
     const updatedCategories = [
-      ...categoriesCollection,
+      ...categories,
       { id: unknownCategoryId, name: "Unknown" },
     ];
-  
-    // Sum the amounts for each category
+
     data.forEach((item) => {
       const { categoryId, amount } = item;
-      const id = categoryId ? String(categoryId) : unknownCategoryId; // Default to "unknown" if categoryId is empty
+      const id = categoryId ? String(categoryId) : unknownCategoryId;
       categoryTotals[id] = (categoryTotals[id] || 0) + Number(amount);
     });
-  
-    // Prepare stats with percentages and prioritize "Unknown" at the top
+
     return updatedCategories
       .map((category) => {
         const total = categoryTotals[category.id] || 0;
@@ -31,27 +45,12 @@ const CategoryBased = ({ data, categoriesCollection, totalExpense }) => {
           percentage: Math.round(percentage),
         };
       })
-      .sort((a, b) => {
-        // Always place "Unknown" at the top
-        if (a.id === unknownCategoryId) return -1;
-        if (b.id === unknownCategoryId) return 1;
-        // For other categories, sort by total in descending order
-        return b.total - a.total;
-      });
+      .sort((a, b) => (a.id === unknownCategoryId ? -1 : b.total - a.total));
   };
-  
-  
-  // Generate statistics
-  const categoryStats = calculateCategoryStats(data, categoriesCollection, totalExpense);
 
-  // Define colors for progress circles
-  const colors = [
-    "#ff4d4f", // Red
-    "#40a9ff", // Blue
-    "#73d13d", // Green
-    "#faad14", // Orange
-    "#722ed1", // Purple
-  ];
+  const categoryStats = calculateCategoryStats(data, categories, totalExpense);
+
+  const colors = ["#ff4d4f", "#40a9ff", "#73d13d", "#faad14", "#722ed1"];
 
   return (
     <Card style={{ overflowY: "auto", maxHeight: "400px", padding: "10px" }}>
@@ -65,16 +64,14 @@ const CategoryBased = ({ data, categoriesCollection, totalExpense }) => {
             marginBottom: "10px",
             padding: "10px",
             borderBottom: "1px solid #f0f0f0",
-            className:"delius-regular"
           }}
         >
-          {/* Smaller Progress Bar for Mobile */}
           <Progress
             type="circle"
             percent={category.percentage}
             format={(percent) => `${percent}%`}
             strokeColor={colors[index % colors.length]}
-            width={60} // Smaller size for mobile
+            width={60}
           />
           <div style={{ flex: 1, marginLeft: "10px" }}>
             <h4 style={{ margin: 0, color: colors[index % colors.length] }}>{category.name}</h4>

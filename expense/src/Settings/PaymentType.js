@@ -1,82 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Typography, Input, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { db } from "../DataAcess/firebase"; // Ensure this imports your initialized Firebase app
-import { dbSetting } from "../DataAcess/dbSetting"; // Assuming this contains the necessary table/collection name
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
+import { subscribeToPaymentTypes, updatePaymentType, addPaymentType } from "../redux/paymentTypeSlice";
 
 const { Title } = Typography;
 
-const PaymentType = ({ data,onPaymentTypeChange  }) => {
+const PaymentType = () => {
   
-  const [paymentTypes, setPaymentTypes] = useState(data || []);
-  const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
-
-  const handleInputChange = (id, value) => {
-    const updatedPaymentTypes = paymentTypes.map((paymentType) =>
-        paymentType.id === id ? { ...paymentType, name: value } : paymentType
-    );
-    setPaymentTypes(updatedPaymentTypes);
-
-  
-    const paymentType = updatedPaymentTypes.find((cat) => cat.id === id);
-    if (paymentType) {
-        savePaymentType(paymentType);
-    }
-
-  };
-
-
-  const handleAddRow = async () => {
-    try {
-      const docRef = await addDoc(collection(db, dbSetting.PaymentTypeTable), {
-        name: "",
-        isActive:true,
-        createdOn: serverTimestamp(),
-        updatedOn: serverTimestamp(),
-      });
-     
-      setPaymentTypes((prevPaymentTypes) => [
-        ...prevPaymentTypes,
-        { id: docRef.id, name: "" },
-      ]);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
-
+   const dispatch = useDispatch();
+    const { data: paymentTypes = [], loading, error } = useSelector((state) => state.paymentTypes);
+  useEffect(() => {
+     const unsubscribe = dispatch(subscribeToPaymentTypes()); // Subscribe to real-time updates
+     return () => unsubscribe(); // Cleanup on unmount
+   }, [dispatch]);
  
-  const savePaymentType = async (payementType) => {
-
-    const updatedPaymentTypes = [...paymentTypes];
-    const paymentTypeToUpdate = updatedPaymentTypes.find((cat) => cat.id === payementType.id);
-
-    if (paymentTypeToUpdate) {
-        paymentTypeToUpdate.name = payementType.name;
-      setPaymentTypes(updatedPaymentTypes);
-
-      try {
-        await updateDoc(doc(db, dbSetting.PaymentTypeTable, payementType.id), {
-          name: payementType.name,
-          isActive:true,
-          updatedOn: serverTimestamp(),
-          userId:userId
-        });
-
-        onPaymentTypeChange(updatedPaymentTypes);
-        
-      } catch (error) {
-        console.error("Error updating document: ", error);
-        message.error(`Failed to update payment Type: ${payementType.name}`);
-      }
-    }
-  };
+   useEffect(() => {
+     if (error) {
+       message.error(`Error: ${error}`);
+     }
+   }, [error]);
+ 
+   const handleInputChange = (id, value) => {
+     dispatch(updatePaymentType({ id, name: value }));
+   };
+ 
+   const handleAddRow = () => {
+     dispatch(addPaymentType());
+   };
 
   return (
     <div>

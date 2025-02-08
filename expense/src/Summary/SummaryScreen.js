@@ -6,14 +6,14 @@ const YearlySummary = lazy(() => import("./YearlySummary"));
 
 const { Title } = Typography;
 
-const SummaryScreen = ({categoriesCollection}) => {
+const SummaryScreen = () => {
   const items = [
     {
       key: "1",
       label: <span className="delius-regular">Monthly Summary</span>,
       children: (
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
-          <MonthlySummary categoriesCollection={categoriesCollection}/>
+          <MonthlySummary />
         </Suspense>
       ),
     },

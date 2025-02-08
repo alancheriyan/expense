@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Row, Col, Spin } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchIncomeTypes } from '../redux/incomeTypeSlice'; // Import the action to fetch income types
+import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice'; // Import the action to fetch income types
 import { IncomeList } from './IncomeList';
 import { fetchIncome } from '../DataAcess/DataAccess';
 
@@ -57,9 +57,14 @@ const IncomeScreen = () => {
 
   // Fetch income data on current date change
   useEffect(() => {
-    dispatch(fetchIncomeTypes()); // Fetch income types from Redux on mount
+    const unsubscribe = dispatch(subscribeToIncomeTypes()); // Subscribe to real-time updates
+    return () => unsubscribe(); // Cleanup on unmount
+    
+  }, [dispatch]); // Dependency on currentDate and dispatch
+
+  useEffect(() => {
     fetchIncomeData(new Date(currentDate));
-  }, [currentDate, dispatch]); // Dependency on currentDate and dispatch
+  }, [currentDate]);
 
   return (
     <div className="container">

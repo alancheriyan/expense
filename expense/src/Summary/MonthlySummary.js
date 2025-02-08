@@ -7,7 +7,7 @@ import { dbSetting } from "../DataAcess/dbSetting";
 const { Option } = Select;
 const CategoryBased = lazy(() => import("./CategoryBased"));
 
-const MonthlySummary = ({categoriesCollection}) => {
+const MonthlySummary = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
@@ -150,7 +150,7 @@ const MonthlySummary = ({categoriesCollection}) => {
             marginTop: "20px"
         }}>
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
-          <CategoryBased data={expenses} categoriesCollection={categoriesCollection} totalExpense={totalExpense}/>
+          <CategoryBased data={expenses}  totalExpense={totalExpense}/>
         </Suspense>
         </div>
     </div>

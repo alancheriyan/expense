@@ -1,77 +1,53 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs, addDoc, updateDoc, doc, serverTimestamp, Timestamp, query, where } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, updateDoc, doc, serverTimestamp, query, where,orderBy } from "firebase/firestore";
 import { db } from "../DataAcess/firebase";
 import { dbSetting } from "../DataAcess/dbSetting";
 
-// Fetch Income Types from Firestore with userId filter
-export const fetchIncomeTypes = createAsyncThunk(
-  "incomeTypes/fetchIncomeTypes", 
-  async (_, { rejectWithValue }) => {
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
-    
-    if (!userId) {
-      return rejectWithValue("User ID is missing from localStorage");
-    }
+// Fetch Income Types with Real-Time Updates
+export const subscribeToIncomeTypes = () => (dispatch) => {
+  const userId = localStorage.getItem('userId');
+  if (!userId) return;
 
-    try {
-      const incomeTypesQuery = query(
-        collection(db, dbSetting.IncomeTypeTable),
-        where("userId", "==", userId) // Filter by userId
-      );
-      const querySnapshot = await getDocs(incomeTypesQuery);
-      
-      const incomeTypes = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
+  const incomeTypesQuery = query(
+    collection(db, dbSetting.IncomeTypeTable),
+    where("userId", "==", userId),
+    orderBy("createdOn")
+  );
 
-        return {
-          id: doc.id,
-          name: data.name,
-          isActive: data.isActive,
-          createdOn: data.createdOn instanceof Timestamp ? data.createdOn.toDate().toISOString() : null,
-          updatedOn: data.updatedOn instanceof Timestamp ? data.updatedOn.toDate().toISOString() : null,
-          userId: data.userId // Add userId to the object
-        };
-      });
+  return onSnapshot(incomeTypesQuery, (snapshot) => {
+    const incomeTypes = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdOn: doc.data().createdOn?.toDate().toISOString() || null,
+      updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
+    }));
 
-      return incomeTypes;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
+    dispatch(setIncomeTypes(incomeTypes)); // Update Redux state
+  });
+};
 
-// Add New Income Type to Firestore with userId
+// Add New Income Type
 export const addIncomeType = createAsyncThunk(
   "incomeTypes/addIncomeType", 
   async (_, { rejectWithValue }) => {
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
-    
-    if (!userId) {
-      return rejectWithValue("User ID is missing from localStorage");
-    }
+    const userId = localStorage.getItem('userId');
+    if (!userId) return rejectWithValue("User ID is missing");
 
     try {
-      const newDocRef = await addDoc(collection(db, dbSetting.IncomeTypeTable), {
+      await addDoc(collection(db, dbSetting.IncomeTypeTable), {
         name: "",
         isActive: true,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
-        userId: userId, // Include userId in the new document
+        userId: userId,
       });
-
-      return { 
-        id: newDocRef.id, 
-        name: "", 
-        isActive: true, 
-        userId: userId // Add userId to the result object
-      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Update Income Type in Firestore
+// Update Income Type
 export const updateIncomeType = createAsyncThunk(
   "incomeTypes/updateIncomeType", 
   async (updatedIncomeType, { rejectWithValue }) => {
@@ -81,8 +57,6 @@ export const updateIncomeType = createAsyncThunk(
         isActive: updatedIncomeType.isActive ?? true,
         updatedOn: serverTimestamp(),
       });
-
-      return updatedIncomeType; // Return the updated object to Redux store
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -92,51 +66,12 @@ export const updateIncomeType = createAsyncThunk(
 const incomeTypeSlice = createSlice({
   name: "incomeTypes",
   initialState: { data: [], loading: false, error: null },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      // Fetch Income Types
-      .addCase(fetchIncomeTypes.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchIncomeTypes.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-      })
-      .addCase(fetchIncomeTypes.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // Add Income Type
-      .addCase(addIncomeType.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(addIncomeType.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data.push(action.payload); // Add new income type to the state
-      })
-      .addCase(addIncomeType.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // Update Income Type
-      .addCase(updateIncomeType.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(updateIncomeType.fulfilled, (state, action) => {
-        state.loading = false;
-        const index = state.data.findIndex((item) => item.id === action.payload.id);
-        if (index !== -1) {
-          state.data[index] = action.payload; // Update Redux state
-        }
-      })
-      .addCase(updateIncomeType.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+  reducers: {
+    setIncomeTypes: (state, action) => {
+      state.data = action.payload; // Update Redux state when Firestore changes
+    },
   },
 });
 
+export const { setIncomeTypes } = incomeTypeSlice.actions;
 export default incomeTypeSlice.reducer;

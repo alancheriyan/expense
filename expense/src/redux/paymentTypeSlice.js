@@ -3,34 +3,36 @@ import { collection, addDoc, updateDoc, doc, serverTimestamp, query, where, onSn
 import { db } from "../DataAcess/firebase";
 import { dbSetting } from "../DataAcess/dbSetting";
 
-// Subscribe to real-time updates for Categories
-export const subscribeToCategories = () => (dispatch) => {
+// Subscribe to real-time updates for Payment Types
+export const subscribeToPaymentTypes = () => (dispatch) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return;
-  const categoriesQuery = query(
-    collection(db, dbSetting.CategoryTable),
+
+  const paymentTypesQuery = query(
+    collection(db, dbSetting.PaymentTypeTable),
     where("userId", "==", userId),
-    orderBy("createdOn")
+    orderBy("createdOn") // Order by creation date (newest first)
   );
 
-  return onSnapshot(categoriesQuery, (snapshot) => {
-    const categories = snapshot.docs.map((doc) => ({
+
+  return onSnapshot(paymentTypesQuery, (snapshot) => {
+    const paymentTypes = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdOn: doc.data().createdOn?.toDate().toISOString() || null,
       updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
     }));
-    dispatch(setCategories(categories));
+    dispatch(setPaymentTypes(paymentTypes));
   });
 };
 
-// Add New Category
-export const addCategory = createAsyncThunk("categories/addCategory", async (_, { rejectWithValue }) => {
+// Add New Payment Type
+export const addPaymentType = createAsyncThunk("paymentTypes/addPaymentType", async (_, { rejectWithValue }) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return rejectWithValue("User ID is missing from localStorage");
 
   try {
-    const newDocRef = await addDoc(collection(db, dbSetting.CategoryTable), {
+    const newDocRef = await addDoc(collection(db, dbSetting.PaymentTypeTable), {
       name: "",
       isActive: true,
       createdOn: serverTimestamp(),
@@ -44,61 +46,61 @@ export const addCategory = createAsyncThunk("categories/addCategory", async (_, 
   }
 });
 
-// Update Category
-export const updateCategory = createAsyncThunk("categories/updateCategory", async (updatedCategory, { rejectWithValue }) => {
+// Update Payment Type
+export const updatePaymentType = createAsyncThunk("paymentTypes/updatePaymentType", async (updatedPaymentType, { rejectWithValue }) => {
   try {
-    await updateDoc(doc(db, dbSetting.CategoryTable, updatedCategory.id), {
-      name: updatedCategory.name,
+    await updateDoc(doc(db, dbSetting.PaymentTypeTable, updatedPaymentType.id), {
+      name: updatedPaymentType.name,
       isActive: true,
       updatedOn: serverTimestamp(),
     });
 
-    return updatedCategory;
+    return updatedPaymentType;
   } catch (error) {
     return rejectWithValue(error.message);
   }
 });
 
-const categorySlice = createSlice({
-  name: "categories",
+const paymentTypeSlice = createSlice({
+  name: "paymentTypes",
   initialState: { data: [], loading: false, error: null },
   reducers: {
-    setCategories: (state, action) => {
+    setPaymentTypes: (state, action) => {
       state.data = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Add Category
-      .addCase(addCategory.pending, (state) => {
+      // Add Payment Type
+      .addCase(addPaymentType.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addCategory.fulfilled, (state, action) => {
+      .addCase(addPaymentType.fulfilled, (state, action) => {
         state.loading = false;
         state.data.push(action.payload);
       })
-      .addCase(addCategory.rejected, (state, action) => {
+      .addCase(addPaymentType.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      // Update Category
-      .addCase(updateCategory.pending, (state) => {
+      // Update Payment Type
+      .addCase(updatePaymentType.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateCategory.fulfilled, (state, action) => {
+      .addCase(updatePaymentType.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.data.findIndex((item) => item.id === action.payload.id);
         if (index !== -1) {
           state.data[index] = action.payload;
         }
       })
-      .addCase(updateCategory.rejected, (state, action) => {
+      .addCase(updatePaymentType.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
 
-export const { setCategories } = categorySlice.actions;
-export default categorySlice.reducer;
+export const { setPaymentTypes } = paymentTypeSlice.actions;
+export default paymentTypeSlice.reducer;
