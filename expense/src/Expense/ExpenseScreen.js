@@ -65,7 +65,7 @@ const ExpenseScreen = () => {
 
     useEffect(() => {
       fetchExpenseData(new Date(currentDate));
-    }, [currentDate]);
+    }, [currentDate,paymentTypes]);
 
     useEffect(() => {
       const unsubscribeCategories = dispatch(subscribeToCategories());
