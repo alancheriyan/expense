@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Input, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,9 +6,10 @@ import { subscribeToCategories, updateCategory, addCategory } from "../redux/exp
 
 const { Title } = Typography;
 
-const ExpenseCategory = () => {
+const ExpenseCategory = ({showHeading}) => {
   const dispatch = useDispatch();
   const { data: categories = [], loading, error } = useSelector((state) => state.categories);
+  const [IsDisplayHeading,setIsDisplayHeading]= useState(true);
 
   useEffect(() => {
     const unsubscribe = dispatch(subscribeToCategories()); // Subscribe to real-time updates
@@ -21,6 +22,12 @@ const ExpenseCategory = () => {
     }
   }, [error]);
 
+  useEffect(()=>{
+      if(showHeading!==undefined){
+        setIsDisplayHeading(showHeading);
+      }
+  },[])
+
   const handleInputChange = (id, value) => {
     dispatch(updateCategory({ id, name: value }));
   };
@@ -31,12 +38,14 @@ const ExpenseCategory = () => {
 
   return (
     <div>
-      <Title
+      {IsDisplayHeading?( <Title
         style={{ marginBottom: "20px", fontSize: "10px" }}
         className="delius-swash-caps-regular"
+        
       >
         Expense Category
-      </Title>
+      </Title>):""}
+     
 
       <div style={{ marginBottom: "20px" }}>
         {categories.length > 0 &&

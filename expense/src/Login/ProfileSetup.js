@@ -69,7 +69,7 @@ const ProfileSetup = () => {
         return (
           <div>
             <Suspense fallback={<Spin size="large" />}>
-              <ExpenseCategory />
+              <ExpenseCategory showHeading={false}/>
             </Suspense>
             <p className="delius-regular">You can skip this now and modify it later.</p>
             <p className="delius-regular">eg: Utilities, Entertainment, Rent</p>

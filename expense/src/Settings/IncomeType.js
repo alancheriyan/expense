@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Typography, Input, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,9 +6,10 @@ import { subscribeToIncomeTypes, updateIncomeType, addIncomeType } from "../redu
 
 const { Title } = Typography;
 
-const IncomeType = () => {
+const IncomeType = ({showHeading}) => {
   const dispatch = useDispatch();
   const { data: incomeTypes = [], loading, error } = useSelector((state) => state.incomeTypes);
+  const [IsDisplayHeading,setIsDisplayHeading]= useState(true);
 
   useEffect(() => {
     const unsubscribe = dispatch(subscribeToIncomeTypes()); // Subscribe to real-time updates
@@ -23,11 +24,18 @@ const IncomeType = () => {
     dispatch(addIncomeType());
   };
 
+    useEffect(()=>{
+        if(showHeading!==undefined){
+          setIsDisplayHeading(showHeading);
+        }
+    },[])
+
   return (
     <div>
-      <Title style={{ marginBottom: "20px", fontSize: "10px" }} className="delius-swash-caps-regular">
+      {IsDisplayHeading?(<Title style={{ marginBottom: "20px", fontSize: "10px" }} className="delius-swash-caps-regular">
         Income Type
-      </Title>
+      </Title>):""}
+      
 
       {/* Wrap the content in Spin to show a loading state */}
      

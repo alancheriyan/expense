@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Typography, Input, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,14 +6,22 @@ import { subscribeToPaymentTypes, updatePaymentType, addPaymentType } from "../r
 
 const { Title } = Typography;
 
-const PaymentType = () => {
+const PaymentType = ({showHeading}) => {
   
    const dispatch = useDispatch();
     const { data: paymentTypes = [], loading, error } = useSelector((state) => state.paymentTypes);
-  useEffect(() => {
-     const unsubscribe = dispatch(subscribeToPaymentTypes()); // Subscribe to real-time updates
-     return () => unsubscribe(); // Cleanup on unmount
-   }, [dispatch]);
+    const [IsDisplayHeading,setIsDisplayHeading]= useState(true);
+
+    useEffect(()=>{
+      if(showHeading!==undefined){
+        setIsDisplayHeading(showHeading);
+      }
+    },[])
+
+    useEffect(() => {
+      const unsubscribe = dispatch(subscribeToPaymentTypes()); // Subscribe to real-time updates
+      return () => unsubscribe(); // Cleanup on unmount
+    }, [dispatch]);
  
    useEffect(() => {
      if (error) {
@@ -31,12 +39,13 @@ const PaymentType = () => {
 
   return (
     <div>
-      <Title
+      {IsDisplayHeading?(<Title
         style={{ marginBottom: "20px",fontSize:"10px"  }}
         className="delius-swash-caps-regular"
       >
         Payment Type
-      </Title>
+      </Title>):""}
+      
 
       <div style={{ marginBottom: "20px" }}>
         {paymentTypes.map((paymentType) => (
