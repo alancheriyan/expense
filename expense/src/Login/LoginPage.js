@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Card, message, Typography } from "antd";
+import { Form, Input, Button, Card, Typography } from "antd";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db } from "../DataAcess/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -36,10 +36,20 @@ const LoginPage = () => {
   
         navigate("/"); // Redirect to Expense
       } else {
-        message.error("User role not found!");
+        form.setFields([
+          {
+            name: "email",
+            errors: ["User role not found!"]
+          }
+        ]);
       }
     } catch (error) {
-      message.error("Invalid email or password!");
+      form.setFields([
+        {
+          name: "password",
+          errors: ["Invalid email or password!"]
+        }
+      ]);
     }
   
     setLoading(false);
@@ -49,15 +59,31 @@ const LoginPage = () => {
   const handleForgotPassword = async () => {
     const email = form.getFieldValue("email"); // Get the entered email
     if (!email) {
-      message.warning("Please enter your email to reset the password!");
+      form.setFields([
+        {
+          name: "email",
+          errors: ["Please enter your email to reset the password!"]
+        }
+      ]);
       return;
     }
 
     try {
       await sendPasswordResetEmail(auth, email);
-      message.success("Password reset link sent to your email!");
+      form.setFields([
+        {
+          name: "email",
+          errors: []
+        }
+      ]);
+      alert("Password reset link sent to your email!");
     } catch (error) {
-      message.error("Error sending reset email. Check your email address!");
+      form.setFields([
+        {
+          name: "email",
+          errors: ["Error sending reset email. Check your email address!"]
+        }
+      ]);
     }
   };
 
@@ -65,7 +91,7 @@ const LoginPage = () => {
     <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f0f2f5" }}>
       <Card style={{ width: 400, padding: "20px", textAlign: "center" }} title="Sign In">
         <Form form={form} name="login" onFinish={onFinish} style={{ maxWidth: 300 }}>
-          <Form.Item name="email" rules={[{ required: true, type: "email", message: "Enter a valid email!" }]}>
+          <Form.Item name="email" rules={[{ required: true, type: "email" }]}>
             <Input placeholder="Email" />
           </Form.Item>
           <Form.Item name="password" rules={[{ required: true, message: "Enter your password!" }]}>
