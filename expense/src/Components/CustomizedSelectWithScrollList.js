@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Input, Drawer } from "antd";
 import "./CustomizedSelectWithScrollList.css";
 
@@ -48,7 +48,8 @@ const CustomizedSelectWithScrollList = ({
     setDrawerVisible(false);
   };
 
-  const scrollToSelectedItem = () => {
+  // Memoize the scrollToSelectedItem function
+  const scrollToSelectedItem = useCallback(() => {
     const container = scrollRef.current;
     if (!container || data.length === 0) return;
 
@@ -61,21 +62,29 @@ const CustomizedSelectWithScrollList = ({
 
     if (selectedItem) {
       container.scrollTop =
-        selectedItem.offsetTop -
-        (container.offsetHeight / 2 - selectedItem.offsetHeight / 2);
+        selectedItem.offsetTop - (container.offsetHeight / 2 - selectedItem.offsetHeight / 2);
     }
-  };
+  }, [data, defaultValue]); // Add data and defaultValue as dependencies
 
   useEffect(() => {
     if (drawerVisible && scrollRef.current) {
       scrollToSelectedItem();
     }
-  }, [drawerVisible]);
+  }, [drawerVisible, scrollToSelectedItem]); // Added scrollToSelectedItem to the dependency array
 
   useEffect(() => {
     const selectedName = data.find((item) => item.id === defaultValue)?.name;
     if (selectedName) setSelectedValue(selectedName);
-  }, [defaultValue]);
+  }, [defaultValue, data]); // Added data to the dependency array
+
+  const handleInputClick = () => {
+    if (data.length === 1) {
+      const singleItem = data[0];
+      setSelectedValue(singleItem.name); // Set the input value to the only item
+      onSelectedKeyChange(singleItem.id); // Set the key
+    }
+    setDrawerVisible(true); // Open the drawer
+  };
 
   return (
     <div>
@@ -83,7 +92,7 @@ const CustomizedSelectWithScrollList = ({
         readOnly
         value={selectedValue}
         placeholder={drawerText}
-        onClick={() => setDrawerVisible(true)}
+        onClick={handleInputClick} // Handle click to open the drawer
         style={{ cursor: "pointer" }}
         className="delius-regular"
       />
@@ -112,9 +121,7 @@ const CustomizedSelectWithScrollList = ({
                 key={item.id}
                 data-value={item.name}
                 onClick={() => handleSelect(item.id)}
-                className={`custom-scroll-list-item ${
-                  selectedValue === item.name ? "selected" : ""
-                }`}
+                className={`custom-scroll-list-item ${selectedValue === item.name ? "selected" : ""}`}
               >
                 {item.name}
               </div>
