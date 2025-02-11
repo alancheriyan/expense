@@ -16,18 +16,24 @@ const LoginPage = () => {
   const onFinish = async (values) => {
     const { email, password } = values;
     setLoading(true);
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       // Retrieve user role from Firestore (tbluser)
       const userDoc = await getDoc(doc(db, dbSetting.UserTable, user.uid));
       if (userDoc.exists()) {
+        const userInfo = {
+          id: user.uid,
+          ...userDoc.data(),
+        };
+  
         localStorage.setItem("userId", user.uid);
         localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("userId", user.uid);
-        localStorage.setItem("setupProfile", user.setupProfile);
+        localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info correctly
+        localStorage.setItem("setupProfile", userDoc.data().setupProfile || false); // Ensure it's fetched from Firestore
+  
         navigate("/"); // Redirect to Expense
       } else {
         message.error("User role not found!");
@@ -35,9 +41,10 @@ const LoginPage = () => {
     } catch (error) {
       message.error("Invalid email or password!");
     }
-
+  
     setLoading(false);
   };
+  
 
   const handleForgotPassword = async () => {
     const email = form.getFieldValue("email"); // Get the entered email

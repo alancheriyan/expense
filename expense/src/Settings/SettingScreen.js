@@ -9,6 +9,7 @@ import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 const ExpenseCategory = React.lazy(() => import("./ExpenseCategory"));
 const PaymentType = React.lazy(() => import("./PaymentType"));
 const IncomeType = React.lazy(() => import("./IncomeType"));
+const Account =React.lazy(() => import("./Accounts"));
 
 const { Title } = Typography;
 
@@ -20,6 +21,9 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
     try {
       await signOut(auth);
       localStorage.removeItem("userId");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("setupProfile");
       navigate("/login"); // Redirect to login page
     } catch (error) {
       console.error("Logout failed:", error);
@@ -49,6 +53,11 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
       {!activeComponent && (
         <Card>
           <Row>
+          <Col span={24} onClick={() => setActiveComponent("Accounts")} style={{ cursor: "pointer" }}>
+              <span className="delius-regular">Accounts</span>
+              <ArrowRightOutlined style={{ float: "right", fontSize: "18px" }} />
+            </Col>
+            <Divider />
             <Col span={24} onClick={() => setActiveComponent("ExpenseCategory")} style={{ cursor: "pointer" }}>
               <span className="delius-regular">Expense Category</span>
               <ArrowRightOutlined style={{ float: "right", fontSize: "18px" }} />
@@ -70,6 +79,11 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
       {/* Show selected component and hide settings */}
       {activeComponent && (
         <Suspense fallback={<Spin tip="Loading..." />}>
+          {activeComponent === "Accounts" && (
+            <div style={{ marginTop: "50px" }}>
+              <Account />
+            </div>
+          )}
           {activeComponent === "ExpenseCategory" && (
             <div style={{ marginTop: "50px" }}>
               <ExpenseCategory data={categoriesCollection} onCategoriesChange={onCategoriesChange} />
