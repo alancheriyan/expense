@@ -11,6 +11,7 @@ export const subscribeToIncomeTypes = () => (dispatch) => {
   const incomeTypesQuery = query(
     collection(db, dbSetting.IncomeTypeTable),
     where("userId", "==", userId),
+    where ("isActive","==",true),
     orderBy("createdOn")
   );
 
@@ -47,21 +48,31 @@ export const addIncomeType = createAsyncThunk(
   }
 );
 
-// Update Income Type
+
 export const updateIncomeType = createAsyncThunk(
-  "incomeTypes/updateIncomeType", 
-  async (updatedIncomeType, { rejectWithValue }) => {
+  "incomeTypes/updateIncomeType",
+  async ({ id, field, value }, { rejectWithValue }) => {
     try {
-      await updateDoc(doc(db, dbSetting.IncomeTypeTable, updatedIncomeType.id), {
-        name: updatedIncomeType.name,
-        isActive: updatedIncomeType.isActive ?? true,
+      const updateData = {
         updatedOn: serverTimestamp(),
-      });
+      };
+
+      if (field === "name") {
+        updateData.name = value;
+        updateData.isActive = true;
+      } else if (field === "status") {
+        updateData.isActive = value;
+      }
+
+      await updateDoc(doc(db, dbSetting.IncomeTypeTable, id), updateData);
+      
+      return { id, field, value };
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
+
 
 const incomeTypeSlice = createSlice({
   name: "incomeTypes",

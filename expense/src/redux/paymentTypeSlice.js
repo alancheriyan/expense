@@ -11,7 +11,8 @@ export const subscribeToPaymentTypes = () => (dispatch) => {
   const paymentTypesQuery = query(
     collection(db, dbSetting.PaymentTypeTable),
     where("userId", "==", userId),
-    orderBy("createdOn") // Order by creation date (newest first)
+    where ("isActive","==",true),
+    orderBy("createdOn")
   );
 
 
@@ -46,20 +47,31 @@ export const addPaymentType = createAsyncThunk("paymentTypes/addPaymentType", as
   }
 });
 
-// Update Payment Type
-export const updatePaymentType = createAsyncThunk("paymentTypes/updatePaymentType", async (updatedPaymentType, { rejectWithValue }) => {
-  try {
-    await updateDoc(doc(db, dbSetting.PaymentTypeTable, updatedPaymentType.id), {
-      name: updatedPaymentType.name,
-      isActive: true,
-      updatedOn: serverTimestamp(),
-    });
 
-    return updatedPaymentType;
-  } catch (error) {
-    return rejectWithValue(error.message);
+export const updatePaymentType = createAsyncThunk(
+  "paymentTypes/updatePaymentType",
+  async ({ id, field, value }, { rejectWithValue }) => {
+    try {
+      const updateData = {
+        updatedOn: serverTimestamp(),
+      };
+
+      if (field === "name") {
+        updateData.name = value;
+        updateData.isActive = true;
+      } else if (field === "status") {
+        updateData.isActive = value;
+      }
+
+      await updateDoc(doc(db, dbSetting.PaymentTypeTable, id), updateData);
+      
+      return { id, field, value };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
+
 
 const paymentTypeSlice = createSlice({
   name: "paymentTypes",

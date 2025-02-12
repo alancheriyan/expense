@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from "react";
-import { Typography, Input, Button, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Typography, Input, Button, message,Popconfirm,  Row, Col } from "antd";
+import { PlusOutlined,MinusCircleOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { subscribeToPaymentTypes, updatePaymentType, addPaymentType } from "../redux/paymentTypeSlice";
 
@@ -29,9 +29,15 @@ const PaymentType = ({showHeading}) => {
      }
    }, [error]);
  
-   const handleInputChange = (id, value) => {
-     dispatch(updatePaymentType({ id, name: value }));
-   };
+
+    const handleInputChange = (id, value) => {
+      dispatch(updatePaymentType({ id, field: "name", value }));
+    };
+       
+    const handleDeleteRow = (id) => {
+      dispatch(updatePaymentType({ id, field: "status", value: false }));
+    };
+   
  
    const handleAddRow = () => {
      dispatch(addPaymentType());
@@ -49,14 +55,31 @@ const PaymentType = ({showHeading}) => {
 
       <div style={{ marginBottom: "20px" }}>
         {paymentTypes.map((paymentType) => (
-          <Input
-            key={paymentType.id}
-            value={paymentType.name}
-            onChange={(e) => handleInputChange(paymentType.id, e.target.value)}
-            placeholder="Enter Payment Type"
-            style={{ marginBottom: "10px" }}
-            className="delius-regular"
-          />
+          <Row key={paymentType.id} align="middle" style={{ marginBottom: "10px" }}>
+            <Col flex="auto">
+                <Input
+                key={paymentType.id}
+                value={paymentType.name}
+                onChange={(e) => handleInputChange(paymentType.id, e.target.value)}
+                placeholder="Enter Payment Type"
+                style={{ marginBottom: "10px" }}
+                className="delius-regular"
+              />
+            </Col>
+            <Col flex="40px" style={{ textAlign: "center" }}>
+                <Popconfirm
+                  title="Are you sure you want to delete this Payment Type?"
+                  onConfirm={() => handleDeleteRow(paymentType.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <MinusCircleOutlined
+                    style={{ fontSize: 18, color: "red", cursor: "pointer" }}
+                  />
+                </Popconfirm>
+              </Col>
+          </Row>
+         
         ))}
       </div>
 

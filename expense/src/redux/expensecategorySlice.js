@@ -10,6 +10,7 @@ export const subscribeToCategories = () => (dispatch) => {
   const categoriesQuery = query(
     collection(db, dbSetting.CategoryTable),
     where("userId", "==", userId),
+    where ("isActive","==",true),
     orderBy("createdOn")
   );
 
@@ -45,19 +46,29 @@ export const addCategory = createAsyncThunk("categories/addCategory", async (_, 
 });
 
 // Update Category
-export const updateCategory = createAsyncThunk("categories/updateCategory", async (updatedCategory, { rejectWithValue }) => {
-  try {
-    await updateDoc(doc(db, dbSetting.CategoryTable, updatedCategory.id), {
-      name: updatedCategory.name,
-      isActive: true,
-      updatedOn: serverTimestamp(),
-    });
+export const updateCategory = createAsyncThunk(
+  "categories/updateCategory",
+  async ({ id, field, value }, { rejectWithValue }) => {
+    try {
+      const updateData = {
+        updatedOn: serverTimestamp(),
+      };
 
-    return updatedCategory;
-  } catch (error) {
-    return rejectWithValue(error.message);
+      if (field === "name") {
+        updateData.name = value;
+        updateData.isActive = true;
+      } else if (field === "status") {
+        updateData.isActive = value;
+      }
+
+      await updateDoc(doc(db, dbSetting.CategoryTable, id), updateData);
+      
+      return { id, field, value };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
 
 const categorySlice = createSlice({
   name: "categories",
