@@ -102,12 +102,12 @@ const ProfileSetup = () => {
 
   return (
     <div style={{ width: "80%", margin: "auto", padding: "20px" }}>
-      <Title level={2} className="delius-swash-caps-regular">Profile Setup</Title>
+      <Title level={3} className="delius-swash-caps-regular">Profile Setup</Title>
 
       <Steps current={currentStep}>
-        <Step title="Select Categories" className="delius-regular"/>
-        <Step title="Choose Payment Types" className="delius-regular"/>
-        <Step title="Set Income Type" className="delius-regular"/>
+        <Step title="Add Expense Categories" className="delius-regular"/>
+        <Step title="Add Payment Types" className="delius-regular"/>
+        <Step title="Add Income Type" className="delius-regular"/>
       </Steps>
 
       <div style={{ marginTop: 20 }}>
