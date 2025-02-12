@@ -79,7 +79,7 @@ const ProfileSetup = () => {
         return (
           <div>
             <Suspense fallback={<Spin size="large" />}>
-              <PaymentType />
+              <PaymentType showHeading={false}/>
             </Suspense>
             <p className="delius-regular">You can skip this now and modify it later.</p>
             <p className="delius-regular">eg: Debit Card, Line of Credit, Cash</p>
@@ -89,7 +89,7 @@ const ProfileSetup = () => {
         return (
           <div>
             <Suspense fallback={<Spin size="large" />}>
-              <IncomeType />
+              <IncomeType showHeading={false}/>
             </Suspense>
             <p className="delius-regular">You can skip this now and modify it later.</p>
             <p className="delius-regular">eg: Pay cheque</p>
