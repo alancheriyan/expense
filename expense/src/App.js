@@ -1,6 +1,6 @@
 import React, { lazy, Suspense,useState,useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation ,Navigate} from "react-router-dom";
-import { Layout, Menu, Spin } from "antd";
+import { Layout, Menu, Spin,ConfigProvider } from "antd";
 import {
   WalletOutlined,
   BarChartOutlined,
@@ -205,7 +205,18 @@ const App = () => {
 
 const MainApp = () => (
   <Router>
-    <App />
+    <ConfigProvider
+    theme={{
+      token: {
+        // Seed Token
+        colorPrimary: '#7d2de9',
+        borderRadius: 2,
+
+
+      },
+    }}
+  >  <App /></ConfigProvider>
+  
   </Router>
 );
 
