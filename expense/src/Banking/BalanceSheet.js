@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Form, Typography, Card } from "antd";
+import { Input, Form, Typography, Card, Empty } from "antd";
 import { db } from "../DataAcess/firebase";
 import { updateDoc, doc } from "firebase/firestore";
 import { dbSetting } from "../DataAcess/dbSetting";
@@ -41,20 +41,28 @@ const BalanceSheet = ({ data, onBankingDataChange }) => {
             >
                 Balance Sheet
             </Title>
-            <Card style={{ maxWidth: 600, margin: "auto", padding: "20px" }}>
-                <Form form={form} layout="vertical">
-                    {bankingData.map(({ id, name, balance }) => (
-                        <Form.Item key={id} label={name} name={id} initialValue={balance} className="banking-label delius-regular">
-                            <Input 
-                                type="number" 
-                                value={balance} 
-                                onChange={(e) => handleChange(id, e.target.value)} 
-                                className="banking-input delius-regular"
-                            />
-                        </Form.Item>
-                    ))}
-                </Form>
-            </Card>
+
+            {bankingData.length === 0 ? (
+                <Empty
+                    description={<span className="delius-regular">Balance Sheet feature coming soon</span>}
+                    style={{ marginTop: "50px" }}
+                />
+            ) : (
+                <Card style={{ maxWidth: 600, margin: "auto", padding: "20px" }}>
+                    <Form form={form} layout="vertical">
+                        {bankingData.map(({ id, name, balance }) => (
+                            <Form.Item key={id} label={name} name={id} initialValue={balance} className="banking-label delius-regular">
+                                <Input 
+                                    type="number" 
+                                    value={balance} 
+                                    onChange={(e) => handleChange(id, e.target.value)} 
+                                    className="banking-input delius-regular"
+                                />
+                            </Form.Item>
+                        ))}
+                    </Form>
+                </Card>
+            )}
         </div>
     );
 };

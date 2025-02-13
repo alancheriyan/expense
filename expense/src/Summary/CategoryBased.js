@@ -48,7 +48,8 @@ const CategoryBased = ({ data, totalExpense }) => {
       .sort((a, b) => (a.id === unknownCategoryId ? -1 : b.total - a.total));
   };
 
-  const categoryStats = calculateCategoryStats(data, categories, totalExpense);
+  const categoryStats = calculateCategoryStats(data, categories, totalExpense)
+    .filter(category => !(category.id === "unknown" && category.percentage === 0));
 
   const colors = ["#ff4d4f", "#40a9ff", "#73d13d", "#faad14", "#722ed1"];
 

@@ -19,6 +19,7 @@ const SummaryScreen = () => {
     },
     {
       key: "2",
+      disabled:true,
       label: <span className="delius-regular">Yearly Summary</span>,
       children: (
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
