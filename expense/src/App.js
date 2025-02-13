@@ -24,7 +24,7 @@ const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
 
 const SignUpPage =lazy(() => import("./Login/SignUpPage"));
 const LoginPage =lazy(() => import("./Login/LoginPage"));
-const ProfileSetup =lazy(() => import("./Login/ProfileSetup"));
+//const ProfileSetup =lazy(() => import("./Login/ProfileSetup"));
 
 const App = () => {
   const location = useLocation();
@@ -93,7 +93,6 @@ const App = () => {
                 <Route path="/summary" element={<SummaryScreen  />} />
                 <Route path="/settings" element={<Setting />} />
                 <Route path="/income" element={<IncomeScreen />} />
-                <Route path="/setup" element={<ProfileSetup />} />
                 <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </>

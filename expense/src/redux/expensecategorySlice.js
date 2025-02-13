@@ -26,24 +26,28 @@ export const subscribeToCategories = () => (dispatch) => {
 };
 
 // Add New Category
-export const addCategory = createAsyncThunk("categories/addCategory", async (_, { rejectWithValue }) => {
-  const userId = localStorage.getItem("userId");
-  if (!userId) return rejectWithValue("User ID is missing from localStorage");
+export const addCategory = createAsyncThunk(
+  "categories/addCategory",
+  async ({ value = "" } = {}, { rejectWithValue }) => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return rejectWithValue("User ID is missing from localStorage");
 
-  try {
-    const newDocRef = await addDoc(collection(db, dbSetting.CategoryTable), {
-      name: "",
-      isActive: true,
-      createdOn: serverTimestamp(),
-      updatedOn: serverTimestamp(),
-      userId,
-    });
+    try {
+      const newDocRef = await addDoc(collection(db, dbSetting.CategoryTable), {
+        name: value, // Defaults to "" if not provided
+        isActive: true,
+        createdOn: serverTimestamp(),
+        updatedOn: serverTimestamp(),
+        userId,
+      });
 
-    return { id: newDocRef.id, name: "", isActive: true, userId };
-  } catch (error) {
-    return rejectWithValue(error.message);
+      return { id: newDocRef.id, name: value, isActive: true, userId };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-});
+);
+
 
 // Update Category
 export const updateCategory = createAsyncThunk(

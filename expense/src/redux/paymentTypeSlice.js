@@ -28,13 +28,13 @@ export const subscribeToPaymentTypes = () => (dispatch) => {
 };
 
 // Add New Payment Type
-export const addPaymentType = createAsyncThunk("paymentTypes/addPaymentType", async (_, { rejectWithValue }) => {
+export const addPaymentType = createAsyncThunk("paymentTypes/addPaymentType", async ({ value = "" } = {}, { rejectWithValue }) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return rejectWithValue("User ID is missing from localStorage");
 
   try {
     const newDocRef = await addDoc(collection(db, dbSetting.PaymentTypeTable), {
-      name: "",
+      name: value,
       isActive: true,
       createdOn: serverTimestamp(),
       updatedOn: serverTimestamp(),

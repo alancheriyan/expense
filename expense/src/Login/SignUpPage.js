@@ -5,12 +5,17 @@ import { auth, db } from "../DataAcess/firebase";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { dbSetting } from '../DataAcess/dbSetting';
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {  addCategory } from "../redux/expensecategorySlice";
+import { addIncomeType } from "../redux/incomeTypeSlice";
+import { addPaymentType } from "../redux/paymentTypeSlice";
 
 const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-    
+  const dispatch = useDispatch();
+
   const onFinish = async (values) => {
     const { firstName, lastName, email, password, confirmPassword, role } = values;
    
@@ -18,11 +23,7 @@ const SignUpPage = () => {
       message.error("Passwords do not match!");
       return;
     }
-
     setLoading(true);
-    
-   
-
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -35,22 +36,44 @@ const SignUpPage = () => {
         role: role || "user",
         createdAt: serverTimestamp(), // Use Firebase timestamp
         emailVerified: false,
-        setupProfile:false
+        setupProfile:true
       });
 
 
       // Redirect after showing message
       localStorage.setItem("user", JSON.stringify(userCredential.user));
       localStorage.setItem("userId", userCredential.user.uid);
-      localStorage.setItem("setupProfile", "false");
-      navigate("/setup"); // Redirect to home or another page after signup
+      localStorage.setItem("setupProfile", "true");
+      setupProfile();
 
     } catch (error) {
-      message.error(error.message);;
+      form.setFields([
+        {
+          name: "email",
+          errors: ["This email is already in use. Please log in instead."],
+        },
+      ]);
     }
 
     setLoading(false);
   };
+
+  const setupProfile=()=>{
+    dispatch(addCategory({ value: "Entertainment" }));
+    dispatch(addCategory({ value: "Rent" }));
+    dispatch(addCategory({ value: "Monthly Subscriptions" }));
+    dispatch(addCategory({ value: "Others" }));
+
+    dispatch(addIncomeType({ value: "Pay Cheque" }));
+    dispatch(addIncomeType({ value: "Others" }));
+    
+    dispatch(addPaymentType({ value: "Debit Card" }));
+    dispatch(addPaymentType({ value: "Visa" }));
+    dispatch(addPaymentType({ value: "Cash" }));
+    dispatch(addPaymentType({ value: "MasterCard" }));
+
+    navigate("/"); 
+  }
 
   return (
     <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f0f2f5' }}>

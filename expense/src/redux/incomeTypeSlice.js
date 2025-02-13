@@ -30,13 +30,13 @@ export const subscribeToIncomeTypes = () => (dispatch) => {
 // Add New Income Type
 export const addIncomeType = createAsyncThunk(
   "incomeTypes/addIncomeType", 
-  async (_, { rejectWithValue }) => {
+  async ({ value = "" } = {}, { rejectWithValue }) => {
     const userId = localStorage.getItem('userId');
     if (!userId) return rejectWithValue("User ID is missing");
 
     try {
       await addDoc(collection(db, dbSetting.IncomeTypeTable), {
-        name: "",
+        name: value,
         isActive: true,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
