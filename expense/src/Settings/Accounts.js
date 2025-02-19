@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Typography, DatePicker, Modal } from "antd";
-import { db } from "../DataAcess/firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { Form, Input, Button, Typography, DatePicker, Modal,ColorPicker } from "antd";
+import {serverTimestamp } from "firebase/firestore";
 import { auth } from "../DataAcess/firebase";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification } from "firebase/auth";
 import dayjs from "dayjs";
-import { dbSetting } from "../DataAcess/dbSetting";
 import { useMessage } from "../Components/MessageContext";
 import { useNavigate } from "react-router-dom";
 import { handleLogout } from "../DataAcess/CommonMethod";
+import { updateUserData } from "../DataAcess/DataAccess";
 const { Title } = Typography;
 
 const Accounts = () => {
@@ -29,12 +28,12 @@ const Accounts = () => {
     const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (storedUserInfo) {
-     // setVerifyEmailVisible(!storedUserInfo.emailVerified);
       form.setFieldsValue({
         firstName: storedUserInfo.firstName || "",
         lastName: storedUserInfo.lastName || "",
         email: storedUserInfo.email || "",
         dob: storedUserInfo.dob ? dayjs(storedUserInfo.dob) : null,
+        theme:storedUserInfo.theme
       });
     }
   }, [form]);
@@ -43,17 +42,34 @@ const Accounts = () => {
     const userid = localStorage.getItem("userId");
     if (!userid) return;
     setLoading(true);
+
+    const newTheme = values.theme && typeof values.theme === 'object' ? values.theme.toHexString() : values.theme;
+
     try {
       const updatedUser = {
+        id:userid,
         firstName: values.firstName,
         lastName: values.lastName,
         dob: values.dob ? values.dob.toISOString() : null,
+        theme:newTheme,
         updatedOn: serverTimestamp(),
       };
-      await setDoc(doc(db, dbSetting.UserTable, userid), updatedUser, { merge: true });
+      updateUserData(updatedUser);
       localStorage.setItem("userInfo", JSON.stringify(updatedUser));
+      messageApi.open({
+        type: 'success',
+        content: 'Profile updated',
+      });
+      
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000); 
+      
     } catch (error) {
-      console.error("Failed to update profile", error);
+      messageApi.open({
+        type: 'error',
+        content: 'Failed to update profile',
+      });
     }
     setLoading(false);
   };
@@ -97,7 +113,6 @@ const Accounts = () => {
 
   const handleVerifyEmail = async () => {
     const user = auth.currentUser;
-    debugger;
     if (user) {
       try {
         await sendEmailVerification(user);
@@ -132,6 +147,19 @@ const Accounts = () => {
         <Form.Item label="Email" name="email" className="delius-regular">
           <Input disabled className="delius-regular" />
         </Form.Item>
+
+       <Form.Item label="Theme" name="theme" className="delius-regular">
+          <ColorPicker 
+            value={form.getFieldValue('theme')}
+            onChange={(color) => {
+              if (color) {
+                form.setFieldsValue({ theme: color });
+              }
+            }} 
+          />
+       </Form.Item>
+
+
         {
           verifyEmailVisible && ( <Button type="link" onClick={handleVerifyEmail} block className="delius-regular">
           Verify Email Address

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense,useState,useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation ,Navigate} from "react-router-dom";
-import { Layout, Menu, Spin,ConfigProvider } from "antd";
+import { Routes, Route, Link, useLocation ,Navigate} from "react-router-dom";
+import { Layout, Menu, Spin } from "antd";
 import {
   WalletOutlined,
   BarChartOutlined,
@@ -12,7 +12,6 @@ import { fetchBanking} from "./DataAcess/DataAccess";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
 import './App.css';
-import { MessageProvider } from "./Components/MessageContext";
 
 const { Content } = Layout;
 
@@ -204,24 +203,6 @@ const App = () => {
   );
 };
 
-const MainApp = () => (
-  <Router>
-    <ConfigProvider
-    theme={{
-      token: {
-        // Seed Token
-        colorPrimary: '#65aa6b',
-        borderRadius: 2,
 
 
-      },
-    }}
-  >  
-  <MessageProvider><App /></MessageProvider>
-  
-  </ConfigProvider>
-  
-  </Router>
-);
-
-export default MainApp;
+export default App;
