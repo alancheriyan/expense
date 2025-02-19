@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Typography, DatePicker, Modal, message } from "antd";
+import { Form, Input, Button, Typography, DatePicker, Modal } from "antd";
 import { db } from "../DataAcess/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth } from "../DataAcess/firebase";
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendEmailVerification } from "firebase/auth";
 import dayjs from "dayjs";
 import { dbSetting } from "../DataAcess/dbSetting";
-
+import { useMessage } from "../Components/MessageContext";
+import { useNavigate } from "react-router-dom";
+import { handleLogout } from "../DataAcess/CommonMethod";
 const { Title } = Typography;
 
 const Accounts = () => {
+  const messageApi = useMessage();
+  const navigate = useNavigate();
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,13 +23,13 @@ const Accounts = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [verifyEmailVisible,setVerifyEmailVisible]=useState(true)
+  const [verifyEmailVisible,setVerifyEmailVisible]=useState(localStorage.getItem("emailVerified")||false)
 
   useEffect(() => {
     const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     if (storedUserInfo) {
-      setVerifyEmailVisible(!storedUserInfo.emailVerified);
+     // setVerifyEmailVisible(!storedUserInfo.emailVerified);
       form.setFieldsValue({
         firstName: storedUserInfo.firstName || "",
         lastName: storedUserInfo.lastName || "",
@@ -92,12 +97,21 @@ const Accounts = () => {
 
   const handleVerifyEmail = async () => {
     const user = auth.currentUser;
+    debugger;
     if (user) {
       try {
         await sendEmailVerification(user);
-        message.success("Verification email sent. Please check your inbox.");
+       
+        messageApi.open({
+          type: 'success',
+          content: 'Verification email sent. Please check your inbox.',
+        });
+        handleLogout(navigate);
       } catch (error) {
-        message.error("Failed to send verification email.");
+        messageApi.open({
+          type: 'error',
+          content: 'Failed to send verification email.',
+        });
       }
     }
   };

@@ -170,6 +170,26 @@ export const backupAllTables = async () => {
   }
 }
 
+export const updateUserData = async (userData) => {
+  try {
+    if (userData && userData.id) { // Ensure userData and userData.id exist
+      const docRef = doc(db, dbSetting.UserTable, userData.id); 
+
+      await updateDoc(docRef, {
+        ...userData,
+        updatedOn: serverTimestamp() // Optional timestamp
+      });
+      return true;
+    } else {
+      console.warn("Invalid userData or missing user ID.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error updating data: ", error);
+    return false;
+  }
+};
+
 
 const updateData = async (prodTable) => {
   try {

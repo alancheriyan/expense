@@ -1,34 +1,20 @@
 import React, { useState, Suspense } from "react";
 import { Typography, Button, Card, Divider, Row, Col, Spin } from "antd";
-import { auth } from "../DataAcess/firebase";
-import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { handleLogout } from "../DataAcess/CommonMethod";
 
 // Lazy loading the components
 const ExpenseCategory = React.lazy(() => import("./ExpenseCategory"));
 const PaymentType = React.lazy(() => import("./PaymentType"));
 const IncomeType = React.lazy(() => import("./IncomeType"));
 const Account =React.lazy(() => import("./Accounts"));
-
 const { Title } = Typography;
 
 const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCollection, onPaymentTypeChange, incomeTypeCollection, onIncomeTypeChange }) => {
   const navigate = useNavigate();
   const [activeComponent, setActiveComponent] = useState(null);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem("userId");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("setupProfile");
-      navigate("/login"); // Redirect to login page
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
 
   return (
     <div style={{ padding: "20px", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -108,7 +94,7 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
           type="primary" 
           danger 
           style={{ width: "100%", padding: "10px", fontSize: "16px", marginTop: "20px" }} 
-          onClick={handleLogout}
+          onClick={() => handleLogout(navigate)}
           className="delius-regular"
         >
           Logout

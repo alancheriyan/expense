@@ -5,6 +5,7 @@ import { auth, db } from "../DataAcess/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { dbSetting } from "../DataAcess/dbSetting";
+import { updateUserData } from "../DataAcess/DataAccess";
 
 const { Text } = Typography;
 
@@ -28,11 +29,13 @@ const LoginPage = () => {
           id: user.uid,
           ...userDoc.data(),
         };
-  
+        UpdateEmailVerified(user.emailVerified,userInfo.emailVerified,user.uid)
         localStorage.setItem("userId", user.uid);
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info correctly
+        localStorage.setItem("emailVerified",user.emailVerified)
         localStorage.setItem("setupProfile", userDoc.data().setupProfile || false); // Ensure it's fetched from Firestore
+        
   
         navigate("/"); // Redirect to Expense
       } else {
@@ -54,6 +57,17 @@ const LoginPage = () => {
   
     setLoading(false);
   };
+
+  const UpdateEmailVerified=(newEmailVerifiedStatus,currentEmailVerifiedStatus,userid)=>{
+    if(newEmailVerifiedStatus && newEmailVerifiedStatus!==currentEmailVerifiedStatus){
+      const userData={
+        id:userid,
+        emailVerified:newEmailVerifiedStatus
+      }
+      updateUserData(userData);
+     
+  }
+}
   
 
   const handleForgotPassword = async () => {

@@ -12,6 +12,7 @@ import { fetchBanking} from "./DataAcess/DataAccess";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
 import './App.css';
+import { MessageProvider } from "./Components/MessageContext";
 
 const { Content } = Layout;
 
@@ -209,13 +210,16 @@ const MainApp = () => (
     theme={{
       token: {
         // Seed Token
-        colorPrimary: '#7d2de9',
+        colorPrimary: '#65aa6b',
         borderRadius: 2,
 
 
       },
     }}
-  >  <App /></ConfigProvider>
+  >  
+  <MessageProvider><App /></MessageProvider>
+  
+  </ConfigProvider>
   
   </Router>
 );
