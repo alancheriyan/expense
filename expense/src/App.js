@@ -1,5 +1,5 @@
 import React, { lazy, Suspense,useState,useEffect } from "react";
-import { Routes, Route, Link, useLocation ,Navigate} from "react-router-dom";
+import { Routes, Route, Link, useLocation ,Navigate,useNavigate} from "react-router-dom";
 import { Layout, Menu, Spin } from "antd";
 import {
   WalletOutlined,
@@ -11,6 +11,8 @@ import "antd/dist/reset.css";
 import { fetchBanking} from "./DataAcess/DataAccess";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
+import packageJson from '../package.json';
+import { handleLogout } from "./DataAcess/CommonMethod";
 import './App.css';
 
 const { Content } = Layout;
@@ -24,9 +26,10 @@ const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
 
 const SignUpPage =lazy(() => import("./Login/SignUpPage"));
 const LoginPage =lazy(() => import("./Login/LoginPage"));
-//const ProfileSetup =lazy(() => import("./Login/ProfileSetup"));
+
 
 const App = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const currentKey = location.pathname;
   const [loading, setLoading] = useState(false);
@@ -48,6 +51,18 @@ const App = () => {
 
 
   useEffect(() => {
+
+    debugger
+    const storedVersion = localStorage.getItem("appVersion");
+    const currentVersion = packageJson.version;
+    if(storedVersion){
+      if (storedVersion !== currentVersion){
+        handleLogout(navigate);
+      }
+    }
+    else{
+      localStorage.setItem("appVersion", currentVersion);
+    }
     
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
