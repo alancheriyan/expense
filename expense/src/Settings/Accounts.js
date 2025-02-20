@@ -22,11 +22,11 @@ const Accounts = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [verifyEmailVisible,setVerifyEmailVisible]=useState(localStorage.getItem("emailVerified")||false)
+  const [verifyEmailVisible,setVerifyEmailVisible]=useState(true)
 
   useEffect(() => {
     const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-
+    setVerifyEmailVisible(!localStorage.getItem("emailVerified"))
     if (storedUserInfo) {
       form.setFieldsValue({
         firstName: storedUserInfo.firstName || "",
@@ -119,7 +119,7 @@ const Accounts = () => {
        
         messageApi.open({
           type: 'success',
-          content: 'Verification email sent. Please check your inbox.',
+          content: 'Verification email sent. Please check your inbox or spam',
         });
         handleLogout(navigate);
       } catch (error) {
@@ -145,9 +145,12 @@ const Accounts = () => {
           <DatePicker style={{ width: "100%" }} className="delius-regular" />
         </Form.Item>
         <Form.Item label="Email" name="email" className="delius-regular">
-          <Input disabled className="delius-regular" />
+          <Input
+            disabled
+            className="delius-regular"
+            suffix={!verifyEmailVisible && <span style={{ color: "green" }}>✔</span>}
+          />
         </Form.Item>
-
        <Form.Item label="Theme" name="theme" className="delius-regular">
           <ColorPicker 
             value={form.getFieldValue('theme')}
@@ -162,7 +165,7 @@ const Accounts = () => {
 
         {
           verifyEmailVisible && ( <Button type="link" onClick={handleVerifyEmail} block className="delius-regular">
-          Verify Email Address
+          Verify Email Address ?
           </Button>)  
         }
         <Form.Item>

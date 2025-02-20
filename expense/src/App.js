@@ -13,6 +13,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./DataAcess/firebase";
 import packageJson from '../package.json';
 import { handleLogout } from "./DataAcess/CommonMethod";
+import EmailVerificationModal from "./Components/EmailVerificationModal";
 import './App.css';
 
 const { Content } = Layout;
@@ -35,6 +36,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [bankingData, setBankingData] = useState([]);
   const [userId, setUserId] = useState(localStorage.getItem("userId") || null);
+  const [showModal, setShowModal] = useState(false);
 
   const loaBankingData = async () => {
     setLoading(true);
@@ -67,6 +69,10 @@ const App = () => {
         localStorage.setItem("userId", currentUser.uid);
         setUserId(currentUser.uid);
         loaBankingData();
+        if (!currentUser.emailVerified) {
+          setShowModal(true);
+        }
+        
 
     //backupAllTables();
     //updateAllTables();
@@ -211,6 +217,7 @@ const App = () => {
 </Menu>)
 
      } 
+     {userId && <EmailVerificationModal open={showModal} onClose={() => setShowModal(false)} />}
      
     </Layout>
   );

@@ -27,9 +27,7 @@ const SignUpPage = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Store user details in Firestore (tbluser)
-      await setDoc(doc(db, dbSetting.UserTable, user.uid), {
+      let userInfo = {
         firstName,
         lastName,
         email,
@@ -37,13 +35,20 @@ const SignUpPage = () => {
         createdAt: serverTimestamp(), // Use Firebase timestamp
         emailVerified: false,
         setupProfile:true
-      });
+      };
+      // Store user details in Firestore (tbluser)
+      await setDoc(doc(db, dbSetting.UserTable, user.uid),userInfo);
 
-
+      userInfo = {
+        id: user.uid,
+        ...userInfo,
+      };
       // Redirect after showing message
+      localStorage.setItem("userInfo", JSON.stringify(userInfo)); // Store user info correctly
       localStorage.setItem("user", JSON.stringify(userCredential.user));
       localStorage.setItem("userId", userCredential.user.uid);
       localStorage.setItem("setupProfile", "true");
+      localStorage.setItem("emailVerified", "false");
       setupProfile();
 
     } catch (error) {
