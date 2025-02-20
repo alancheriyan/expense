@@ -87,7 +87,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
             <Title
               level={5}
               className="delius-regular"
-              style={{ fontSize: "16px", color: "#247108" }}
+              style={{ fontSize: "16px", color: "rgb(13, 74, 13)" }}
             >
               Total: {totalAmount.toFixed(2)} CAD
             </Title>
@@ -133,21 +133,6 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
               </Col>
               <Col span={8}>
                 <Form.Item>
-                  {/* <Select
-                    placeholder="Select Category"
-                    value={item.categoryId}
-                    className="delius-regular"
-                    onChange={(value) =>
-                      handleInputChange(index, "categoryId", value)
-                    }
-                    style={{ width: "100%" }}
-                  >
-                    {categories.map((category) => (
-                      <Option key={category.id} value={category.id}>
-                        {category.name}
-                      </Option>
-                    ))}
-                  </Select> */}
                    <CustomizedSelectWithScrollList 
                     data={categories} 
                     onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 

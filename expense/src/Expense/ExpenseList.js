@@ -86,7 +86,7 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
             <Title
               level={5}
               className="delius-regular"
-              style={{ fontSize: "16px", color: "#247108" }}
+              style={{ fontSize: "16px", color: "rgb(156, 57, 57)" }}
             >
               Total: {totalAmount.toFixed(2)} CAD
             </Title>
@@ -133,21 +133,6 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
               </Col>
               <Col span={8}>
                 <Form.Item>
-                 {/*  <Select
-                    placeholder="Select Category"
-                    value={item.categoryId}
-                    className="delius-regular"
-                    onChange={(value) =>
-                      handleInputChange(index, "categoryId", value)
-                    }
-                    style={{ width: "100%" }}
-                  >
-                    {categories.map((category) => (
-                      <Option key={category.id} value={category.id}>
-                        {category.name}
-                      </Option>
-                    ))}
-                  </Select> */}
                   <CustomizedSelectWithScrollList 
                     data={categories} 
                     onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
@@ -158,21 +143,6 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
               </Col>
               <Col span={8}>
                 <Form.Item>
-                {/*   <Select
-                    placeholder="Select Payment Type"
-                    value={item.paymentTypeId}
-                    className="delius-regular"
-                    onChange={(value) =>
-                      handleInputChange(index, "paymentTypeId", value)
-                    }
-                    style={{ width: "100%" }}
-                  >
-                    {paymentTypes.map((type) => (
-                      <Option key={type.id} value={type.id}>
-                        {type.name}
-                      </Option>
-                    ))}
-                  </Select> */}
                   <CustomizedSelectWithScrollList 
                     data={paymentTypes} 
                     onSelectedKeyChange={(key)=>handleInputChange(index, "paymentTypeId",key)} 

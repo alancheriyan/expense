@@ -3,15 +3,14 @@ import { Button, Typography, Row, Col, Spin } from 'antd';
 import { ExpenseList } from './ExpenseList';
 import { fetchExpenses } from '../DataAcess/DataAccess';
 import { useSelector, useDispatch } from 'react-redux';
-import {subscribeToCategories } from '../redux/expensecategorySlice';
-import {subscribeToPaymentTypes } from '../redux/paymentTypeSlice';
-
+import { subscribeToCategories } from '../redux/expensecategorySlice';
+import { subscribeToPaymentTypes } from '../redux/paymentTypeSlice';
 
 const { Title } = Typography;
 
 const ExpenseScreen = () => {
   const dispatch = useDispatch();
-  
+
   const { data: categories = [], loading: categoriesLoading } = useSelector(
     (state) => state.categories
   );
@@ -21,61 +20,49 @@ const ExpenseScreen = () => {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
-  
   const [loading, setLoading] = useState(false);
 
+  const formatDateShort = (date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
 
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
   };
 
-  // Handle date increment
-  const incrementDate = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(prevDate.getDate() + 1);
-      return newDate;
-    });
+  // Get previous and next day labels
+  const prevDate = new Date(currentDate);
+  prevDate.setDate(currentDate.getDate() - 1);
+
+  const nextDate = new Date(currentDate);
+  nextDate.setDate(currentDate.getDate() + 1);
+
+  const fetchExpenseData = async (date) => {
+    setLoading(true);
+    try {
+      const expensesData = await fetchExpenses(date);
+      setExpenses(expensesData);
+    } catch (error) {
+      console.error('Error expense load:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle date decrement
-  const decrementDate = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(prevDate.getDate() - 1);
-      return newDate;
-    });
-  };
+  useEffect(() => {
+    fetchExpenseData(new Date(currentDate));
+  }, [currentDate, paymentTypes]);
 
- 
+  useEffect(() => {
+    const unsubscribeCategories = dispatch(subscribeToCategories());
+    const unsubscribePayments = dispatch(subscribeToPaymentTypes());
 
-    const fetchExpenseData = async (date) => {
-      setLoading(true);
-      try {
-        const expensesData = await fetchExpenses(date);
-        setExpenses(expensesData);
-      } catch (error) {
-        console.error('Error expense load:', error);
-      } finally {
-        setLoading(false);
-      }
+    return () => {
+      unsubscribeCategories();
+      unsubscribePayments();
     };
-
-
-    useEffect(() => {
-      fetchExpenseData(new Date(currentDate));
-    }, [currentDate,paymentTypes]);
-
-    useEffect(() => {
-      const unsubscribeCategories = dispatch(subscribeToCategories());
-      const unsubscribePayments = dispatch(subscribeToPaymentTypes());
-  
-      return () => {
-        unsubscribeCategories();
-        unsubscribePayments(); // ✅ Properly unsubscribing
-      };
-    }, [dispatch]);
+  }, [dispatch]);
 
   return (
     <div className="container">
@@ -83,11 +70,12 @@ const ExpenseScreen = () => {
         <Col>
           <Button
             type="primary"
-            shape="circle"
-            onClick={decrementDate}
+            shape="round"
+            onClick={() => setCurrentDate(prevDate)}
             className="nav-button"
+            style={{fontSize:"10px"}}
           >
-            {'<<'}
+            {`< ${formatDateShort(prevDate)}`}
           </Button>
         </Col>
         <Col>
@@ -98,18 +86,26 @@ const ExpenseScreen = () => {
         <Col>
           <Button
             type="primary"
-            shape="circle"
-            onClick={incrementDate}
+            shape="round"
+            onClick={() => setCurrentDate(nextDate)}
             className="nav-button"
+            style={{fontSize:"10px"}}
           >
-            {'>>'}
+            {`${formatDateShort(nextDate)} >`}
           </Button>
         </Col>
       </Row>
 
       <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
         {paymentTypesLoading || categoriesLoading || loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '50vh',
+            }}
+          >
             <Spin size="large" />
           </div>
         ) : (

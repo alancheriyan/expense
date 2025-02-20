@@ -25,24 +25,17 @@ const IncomeScreen = () => {
     return date.toLocaleDateString('en-US', options);
   };
 
-  // Handle date increment
-  const incrementDate = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(prevDate.getDate() + 1);
-      return newDate;
-    });
+  const formatDateShort = (date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  // Handle date decrement
-  const decrementDate = () => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(prevDate.getDate() - 1);
-      return newDate;
-    });
-  };
+  const prevDate = new Date(currentDate);
+  prevDate.setDate(currentDate.getDate() - 1);
 
+  const nextDate = new Date(currentDate);
+  nextDate.setDate(currentDate.getDate() + 1);
+
+ 
   const fetchIncomeData = async (date) => {
     setLoading(true);
     try {
@@ -72,11 +65,12 @@ const IncomeScreen = () => {
         <Col>
           <Button
             type="primary"
-            shape="circle"
-            onClick={decrementDate}
+            shape="round"
+            onClick={() => setCurrentDate(prevDate)}
             className="nav-button"
+            style={{fontSize:"10px"}}
           >
-            {'<<'}
+            {`< ${formatDateShort(prevDate)}`}
           </Button>
         </Col>
         <Col>
@@ -85,13 +79,14 @@ const IncomeScreen = () => {
           </Title>
         </Col>
         <Col>
-          <Button
+        <Button
             type="primary"
-            shape="circle"
-            onClick={incrementDate}
+            shape="round"
+            onClick={() => setCurrentDate(nextDate)}
             className="nav-button"
+            style={{fontSize:"10px"}}
           >
-            {'>>'}
+            {`${formatDateShort(nextDate)} >`}
           </Button>
         </Col>
       </Row>

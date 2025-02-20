@@ -51,8 +51,6 @@ const App = () => {
 
 
   useEffect(() => {
-
-    debugger
     const storedVersion = localStorage.getItem("appVersion");
     const currentVersion = packageJson.version;
     if(storedVersion){

@@ -24,8 +24,12 @@ const CategoryBased = ({ data, totalExpense }) => {
     const categoryTotals = {};
     const unknownCategoryId = "unknown";
 
+    const validCategories = categories.filter(
+      (category) => category.name && category.name.trim() !== ""
+    );
+
     const updatedCategories = [
-      ...categories,
+      ...validCategories,
       { id: unknownCategoryId, name: "Unknown" },
     ];
 
@@ -54,7 +58,7 @@ const CategoryBased = ({ data, totalExpense }) => {
   const colors = ["#ff4d4f", "#40a9ff", "#73d13d", "#faad14", "#722ed1"];
 
   return (
-    <Card style={{ overflowY: "auto", maxHeight: "400px", padding: "10px" }}>
+    <Card style={{ overflowY: "auto", maxHeight: "250px", padding: "10px" }}>
       {categoryStats.map((category, index) => (
         <div
           key={category.id}
