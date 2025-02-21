@@ -9,7 +9,7 @@ const store = configureStore({
     incomeTypes: incomeTypeReducer,
     categories: categoryReducer, 
     paymentTypes:paymentTypeReducer,
-    savingPlan:savingReducer
+    savingPlanType:savingReducer
   },
 });
 

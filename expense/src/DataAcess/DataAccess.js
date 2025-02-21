@@ -131,6 +131,30 @@ export const fetchIncome = async (date) => {
   }
 };
 
+export const fetchSavings = async (date) => {
+  try {
+    const userId = getUserId();
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+    const expensesQuery = query(
+      collection(db, dbSetting.SavingMasterTable),
+      where("userId", "==", userId),
+      where('date', '>=', Timestamp.fromDate(startOfDay)),
+      where('date', '<=', Timestamp.fromDate(endOfDay))
+    );
+
+    const querySnapshot = await getDocs(expensesQuery);
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error('Error fetching savings:', error);
+    throw error;
+  }
+};
 
 
 const backupData = async (prodTable, devTable) => {

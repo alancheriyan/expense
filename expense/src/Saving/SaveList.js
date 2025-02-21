@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Row, Col, Typography,Empty  } from "antd";
+import { Form, Input, Button, Row, Col, Typography,Empty } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { db } from "../DataAcess/firebase"; 
+import { db } from "../DataAcess/firebase";
 import {
   collection,
   addDoc,
@@ -12,12 +12,11 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { dbSetting } from "../DataAcess/dbSetting";
-import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList";
+import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList"
 
-const { Option } = Select;
 const { Title } = Typography;
 
-export const IncomeList = ({ dataList, currentDate, categories }) => {
+export const SaveList = ({ dataList, currentDate, savingType }) => {
   const [form] = Form.useForm();
   const [items, setItems] = useState(dataList);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -26,17 +25,17 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
   const handleAddRow = async () => {
     try {
       const currentDateTimestamp = Timestamp.fromDate(currentDate);
-      const docRef = await addDoc(collection(db, dbSetting.IncomeTable), {
+      const docRef = await addDoc(collection(db, dbSetting.SavingMasterTable), {
         amount: "",
-        categoryId: "",
+        savingTypeId: "",
         date: currentDateTimestamp,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
-        userId:userId
+        userId:userId,
       });
       setItems([
         ...items,
-        { id: docRef.id, amount: "", categoryId: "" }, // Add row with Firebase ID
+        { id: docRef.id, amount: "", savingTypeId: "" }, 
       ]);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -47,7 +46,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
     const item = items[index];
     if (item.id) {
       try {
-        await deleteDoc(doc(db, dbSetting.IncomeTable, item.id));
+        await deleteDoc(doc(db, dbSetting.SavingMasterTable, item.id));
       } catch (error) {
         console.error("Error deleting document: ", error);
       }
@@ -59,12 +58,11 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
     const updatedItems = [...items];
     updatedItems[index][field] = value;
     setItems(updatedItems);
-
     // Update Firestore document
     const item = updatedItems[index];
     if (item.id) {
       try {
-        await updateDoc(doc(db, dbSetting.IncomeTable, item.id), {
+        await updateDoc(doc(db, dbSetting.SavingMasterTable, item.id), {
           [field]: value,
           updatedOn: serverTimestamp(),
         });
@@ -75,36 +73,33 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
   };
 
   useEffect(() => {
-    const total = items.reduce((sum, income) => sum + (parseFloat(income.amount) || 0), 0);
+    const total = items.reduce((sum, expense) => sum + (parseFloat(expense.amount) || 0), 0);
     setTotalAmount(total);
   }, [items]);
 
+ 
   return (
     <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
       {items.length > 0 && (
         <>
-        <Row style={{ marginTop: "10px", marginLeft: "45%" }}>
+         <Row style={{ marginTop: "10px", marginLeft: "45%" }}>
         <Col span={24}>
           <Row justify="end">
             <Title
               level={5}
               className="delius-regular"
-              style={{ fontSize: "16px", color: "rgb(13, 74, 13)" }}
+              style={{ fontSize: "16px", color: "rgb(156, 57, 57)" }}
             >
               Total: {totalAmount.toFixed(2)} CAD
             </Title>
           </Row>
         </Col>
       </Row>
-        <Row gutter={16} style={{ marginBottom: 10, fontWeight: "bold" }}>
-          <Col span={6}>
-            <span className="delius-heading">Amount</span>
-          </Col>
-          <Col span={8}>
-            <span className="delius-heading">Category</span>
-          </Col>
-          <Col span={2}></Col>
-        </Row>
+      <Row gutter={16} style={{ marginBottom: 10, fontWeight: "bold" }}>
+        <Col span={6}><span className="delius-heading">Amount</span></Col>
+        <Col span={8}><span className="delius-heading">Saving Plan</span></Col>
+        <Col span={2}></Col>
+      </Row>
         </>
       )}
       <div
@@ -135,19 +130,17 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
                       }
                       step="0.01"
                       min="0"
-                      inputMode="decimal"
+                      inputMode="decimal" 
                     />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item>
-                    <CustomizedSelectWithScrollList
-                      data={categories}
-                      onSelectedKeyChange={(key) =>
-                        handleInputChange(index, "categoryId", key)
-                      }
-                      drawerText="Select Category"
-                      defaultValue={item.categoryId}
+                    <CustomizedSelectWithScrollList 
+                      data={savingType} 
+                      onSelectedKeyChange={(key)=>handleInputChange(index, "savingTypeId",key)} 
+                      drawerText="Select Saving Plan" 
+                      defaultValue={item.savingTypeId}
                     />
                   </Form.Item>
                 </Col>
@@ -162,7 +155,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="No income entries available"
+              description="No Saving Plan enteries today"
             />
           )}
         </Form>
@@ -175,7 +168,7 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
             block
             icon={<PlusOutlined />}
           >
-            <span className="delius-regular">Add Income</span>
+            <span className="delius-regular">Add Saving</span>
           </Button>
         </Col>
       </Row>

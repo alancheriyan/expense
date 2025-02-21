@@ -6,7 +6,7 @@ const SavingPlan = ({ showHeading }) => {
   return (
     <EditableList
       title="Saving Plans"
-      dataSelector={(state) => state.categories}
+      dataSelector={(state) => state.savingPlanType}
       subscribeAction={subscribeToSavings}
       updateAction={updateSaving}
       addAction={addSaving}

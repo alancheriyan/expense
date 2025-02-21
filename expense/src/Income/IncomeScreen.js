@@ -1,40 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Row, Col, Spin } from 'antd';
+import {  Spin } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
-import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice'; // Import the action to fetch income types
+import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice';
 import { IncomeList } from './IncomeList';
 import { fetchIncome } from '../DataAcess/DataAccess';
 
-const { Title } = Typography;
 
-const IncomeScreen = () => {
+const IncomeScreen = ({currentDate}) => {
   const dispatch = useDispatch();
   
-  // Use useSelector to get incomeType data from Redux store
   const { data: incomeTypes = [], loading: incomeTypesLoading } = useSelector(
     (state) => state.incomeTypes
   );
 
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // Format date to "Jan 16, 2025"
-  const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-  };
-
-  const formatDateShort = (date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  const prevDate = new Date(currentDate);
-  prevDate.setDate(currentDate.getDate() - 1);
-
-  const nextDate = new Date(currentDate);
-  nextDate.setDate(currentDate.getDate() + 1);
-
  
   const fetchIncomeData = async (date) => {
     setLoading(true);
@@ -48,50 +28,19 @@ const IncomeScreen = () => {
     }
   };
 
-  // Fetch income data on current date change
   useEffect(() => {
-    const unsubscribe = dispatch(subscribeToIncomeTypes()); // Subscribe to real-time updates
-    return () => unsubscribe(); // Cleanup on unmount
+    const unsubscribe = dispatch(subscribeToIncomeTypes());
+    return () => unsubscribe(); 
     
-  }, [dispatch]); // Dependency on currentDate and dispatch
+  }, [dispatch]); 
 
   useEffect(() => {
     fetchIncomeData(new Date(currentDate));
   }, [currentDate]);
 
   return (
-    <div className="container">
-      <Row align="middle" justify="space-between" className="header-row">
-        <Col>
-          <Button
-            type="primary"
-            shape="round"
-            onClick={() => setCurrentDate(prevDate)}
-            className="nav-button"
-            style={{fontSize:"10px"}}
-          >
-            {`< ${formatDateShort(prevDate)}`}
-          </Button>
-        </Col>
-        <Col>
-          <Title level={3} className="date-display delius-swash-caps-regular">
-            {formatDate(currentDate)}
-          </Title>
-        </Col>
-        <Col>
-        <Button
-            type="primary"
-            shape="round"
-            onClick={() => setCurrentDate(nextDate)}
-            className="nav-button"
-            style={{fontSize:"10px"}}
-          >
-            {`${formatDateShort(nextDate)} >`}
-          </Button>
-        </Col>
-      </Row>
-
-      <div className="expense-list" style={{ marginTop: '36px', width: '95%' }}>
+    <div>
+      <div className="expense-list" style={{ marginTop: '10px'}}>
         {incomeTypesLoading || loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <Spin size="large" />
@@ -100,7 +49,7 @@ const IncomeScreen = () => {
           <IncomeList
             dataList={expenses}
             currentDate={currentDate}
-            categories={incomeTypes} // Pass incomeTypes to IncomeList
+            categories={incomeTypes}
           />
         )}
       </div>

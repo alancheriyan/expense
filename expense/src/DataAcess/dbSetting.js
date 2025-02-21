@@ -7,7 +7,8 @@ const prodDatabase={
     UserTable:"tblUser",
     PaymentTypeTable:"tblPaymentType",
     IncomeTypeTable:"tblIncomeType",
-    SavingTable:"tblSavingPlan"
+    SavingTable:"tblSavingPlanType",
+    SavingMasterTable:"tblSaving"
 }
 
 const devDatabase={

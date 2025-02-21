@@ -13,7 +13,6 @@ export const subscribeToSavings = () => (dispatch) => {
     where("isActive", "==", true),
     orderBy("createdOn")
   );
-
   return onSnapshot(savingsQuery, (snapshot) => {
     const savings = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -28,21 +27,20 @@ export const subscribeToSavings = () => (dispatch) => {
 // Add New Saving Goal
 export const addSaving = createAsyncThunk(
   "savings/addSaving",
-  async ({ value = "", amount = 0 } = {}, { rejectWithValue }) => {
+  async ({ value = "" } = {}, { rejectWithValue }) => {
     const userId = localStorage.getItem("userId");
     if (!userId) return rejectWithValue("User ID is missing from localStorage");
 
     try {
       const newDocRef = await addDoc(collection(db, dbSetting.SavingTable), {
-        name: value, // Defaults to "" if not provided
-        amount,
+        name: value, 
         isActive: true,
         createdOn: serverTimestamp(),
         updatedOn: serverTimestamp(),
         userId,
       });
 
-      return { id: newDocRef.id, name: value, amount, isActive: true, userId };
+      return { id: newDocRef.id, name: value, isActive: true, userId };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -60,9 +58,8 @@ export const updateSaving = createAsyncThunk(
 
       if (field === "name") {
         updateData.name = value;
-      } else if (field === "amount") {
-        updateData.amount = value;
-      } else if (field === "status") {
+      }
+      else if (field === "status") {
         updateData.isActive = value;
       }
 

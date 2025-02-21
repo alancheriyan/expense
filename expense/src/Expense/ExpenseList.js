@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Row, Col, Typography } from "antd";
+import { Form, Input, Button, Row, Col, Typography,Empty } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "../DataAcess/firebase"; // Import your Firebase configuration
 import {
@@ -78,9 +78,12 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
     setTotalAmount(total);
   }, [items]);
 
+ 
   return (
     <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}>
-      <Row style={{ marginTop: "10px", marginLeft: "45%" }}>
+      {items.length > 0 && (
+        <>
+         <Row style={{ marginTop: "10px", marginLeft: "45%" }}>
         <Col span={24}>
           <Row justify="end">
             <Title
@@ -99,66 +102,74 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
         <Col span={8}><span className="delius-heading">Payment Type</span></Col>
         <Col span={2}></Col>
       </Row>
+        </>
+      )}
       <div
         style={{
-          maxHeight: "660px", // Set a fixed height for the scrollable area
-          overflowY: "auto", // Enable vertical scrolling
-          paddingRight: "10px", // Add some padding for better UI
-          marginBottom: "20px",
+          maxHeight: "660px",
+          overflowY: "auto", 
+          paddingRight: "10px", 
         }}
       >
         <Form form={form} layout="vertical">
-          {items.map((item, index) => (
-            <Row
-              key={item.id || index}
-              gutter={16}
-              align="middle"
-              style={{ marginBottom: 10 }}
-            >
-              <Col span={6}>
-                <Form.Item>
-                  <Input
-                    type="number"
-                    placeholder="Amount"
-                    className="delius-regular"
-                    value={item.amount}
-                    onChange={(e) =>
-                      handleInputChange(index, "amount", e.target.value)
-                    }
-                    step="0.01"
-                    min="0"
-                    inputMode="decimal" 
+          {items.length > 0 ? (
+            items.map((item, index) => (
+              <Row
+                key={item.id || index}
+                gutter={16}
+                align="middle"
+                style={{ marginBottom: 10 }}
+              >
+                <Col span={6}>
+                  <Form.Item>
+                    <Input
+                      type="number"
+                      placeholder="Amount"
+                      className="delius-regular"
+                      value={item.amount}
+                      onChange={(e) =>
+                        handleInputChange(index, "amount", e.target.value)
+                      }
+                      step="0.01"
+                      min="0"
+                      inputMode="decimal" 
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item>
+                    <CustomizedSelectWithScrollList 
+                      data={categories} 
+                      onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
+                      drawerText="Select Category" 
+                      defaultValue={item.categoryId}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item>
+                    <CustomizedSelectWithScrollList 
+                      data={paymentTypes} 
+                      onSelectedKeyChange={(key)=>handleInputChange(index, "paymentTypeId",key)} 
+                      drawerText="Select Payment Type" 
+                      defaultValue={item.paymentTypeId}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={2} style={{ paddingBottom: "25px" }}>
+                  <MinusCircleOutlined
+                    onClick={() => handleDeleteRow(index)}
+                    style={{ fontSize: 18, color: "red", cursor: "pointer" }}
                   />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item>
-                  <CustomizedSelectWithScrollList 
-                    data={categories} 
-                    onSelectedKeyChange={(key)=>handleInputChange(index, "categoryId",key)} 
-                    drawerText="Select Category" 
-                    defaultValue={item.categoryId}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item>
-                  <CustomizedSelectWithScrollList 
-                    data={paymentTypes} 
-                    onSelectedKeyChange={(key)=>handleInputChange(index, "paymentTypeId",key)} 
-                    drawerText="Select Payment Type" 
-                    defaultValue={item.paymentTypeId}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={2} style={{ paddingBottom: "25px" }}>
-                <MinusCircleOutlined
-                  onClick={() => handleDeleteRow(index)}
-                  style={{ fontSize: 18, color: "red", cursor: "pointer" }}
-                />
-              </Col>
-            </Row>
-          ))}
+                </Col>
+              </Row>
+            ))
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="No Expense entries available"
+            />
+          )}
         </Form>
       </div>
       <Row>

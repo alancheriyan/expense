@@ -19,7 +19,7 @@ import './App.css';
 const { Content } = Layout;
 
 // Lazy-loaded components
-const ExpenseScreen = lazy(() => import("./Expense/ExpenseScreen"));
+const ExpenseScreen = lazy(() => import("./Transaction/Transaction"));
 const IncomeScreen = lazy(() => import("./Income/IncomeScreen"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
