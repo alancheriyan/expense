@@ -19,8 +19,7 @@ import './App.css';
 const { Content } = Layout;
 
 // Lazy-loaded components
-const ExpenseScreen = lazy(() => import("./Transaction/Transaction"));
-const IncomeScreen = lazy(() => import("./Income/IncomeScreen"));
+const Transaction = lazy(() => import("./Transaction/Transaction"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
 const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
@@ -108,10 +107,9 @@ const App = () => {
               </>
             ) : (
               <>
-                <Route path="/" element={<ExpenseScreen />} />
+                <Route path="/" element={<Transaction />} />
                 <Route path="/summary" element={<SummaryScreen  />} />
                 <Route path="/settings" element={<Setting />} />
-                <Route path="/income" element={<IncomeScreen />} />
                 <Route path="/bankings" element={<BalanceSheet  data={bankingData}  onBankingDataChange={handleBankingDataChange} />} />
                 <Route path="*" element={<Navigate to="/" />} />
               </>
@@ -146,22 +144,7 @@ const App = () => {
     <Link to="/">
     <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <WalletOutlined style={{ fontSize: "20px" }} />
-        Expense
-      </span>
-    </Link>
-  </Menu.Item>
-  <Menu.Item
-    key="/income"
-    className="menu-item"
-    style={{
-      textAlign: "center",
-      padding: "8px 16px",
-    }}
-  >
-    <Link to="/income">
-      <span style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <WalletOutlined style={{ fontSize: "20px" }} />
-        Income
+        Transactions
       </span>
     </Link>
   </Menu.Item>
