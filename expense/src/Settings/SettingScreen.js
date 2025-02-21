@@ -9,9 +9,10 @@ const ExpenseCategory = React.lazy(() => import("./ExpenseCategory"));
 const PaymentType = React.lazy(() => import("./PaymentType"));
 const IncomeType = React.lazy(() => import("./IncomeType"));
 const Account =React.lazy(() => import("./Accounts"));
+const SavingPlan =React.lazy(() => import("./SavingPlan"));
 const { Title } = Typography;
 
-const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCollection, onPaymentTypeChange, incomeTypeCollection, onIncomeTypeChange }) => {
+const SettingScreen = () => {
   const navigate = useNavigate();
   const [activeComponent, setActiveComponent] = useState(null);
 
@@ -58,6 +59,11 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
               <span className="delius-regular">Income Type</span>
               <ArrowRightOutlined style={{ float: "right", fontSize: "18px" }} />
             </Col>
+            <Divider />
+            <Col span={24} onClick={() => setActiveComponent("savingPlan")} style={{ cursor: "pointer" }}>
+              <span className="delius-regular">Saving Plans</span>
+              <ArrowRightOutlined style={{ float: "right", fontSize: "18px" }} />
+            </Col>
           </Row>
         </Card>
       )}
@@ -72,17 +78,22 @@ const SettingScreen = ({ categoriesCollection, onCategoriesChange, paymentTypeCo
           )}
           {activeComponent === "ExpenseCategory" && (
             <div style={{ marginTop: "50px" }}>
-              <ExpenseCategory data={categoriesCollection} onCategoriesChange={onCategoriesChange} />
+              <ExpenseCategory  />
             </div>
           )}
           {activeComponent === "PaymentType" && (
             <div style={{ marginTop: "50px" }}>
-              <PaymentType data={paymentTypeCollection} onPaymentTypeChange={onPaymentTypeChange} />
+              <PaymentType  />
             </div>
           )}
           {activeComponent === "IncomeType" && (
             <div style={{ marginTop: "50px" }}>
-              <IncomeType dataset={incomeTypeCollection} onIncomeTypeChange={onIncomeTypeChange} />
+              <IncomeType  />
+            </div>
+          )}
+          {activeComponent === "savingPlan" && (
+            <div style={{ marginTop: "50px" }}>
+              <SavingPlan />
             </div>
           )}
         </Suspense>
