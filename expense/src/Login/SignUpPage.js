@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import {  addCategory } from "../redux/expensecategorySlice";
 import { addIncomeType } from "../redux/incomeTypeSlice";
 import { addPaymentType } from "../redux/paymentTypeSlice";
+import { addSaving } from "../redux/savingSlice";
 
 const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
@@ -76,6 +77,9 @@ const SignUpPage = () => {
     dispatch(addPaymentType({ value: "Visa" }));
     dispatch(addPaymentType({ value: "Cash" }));
     dispatch(addPaymentType({ value: "MasterCard" }));
+
+    dispatch(addSaving({ value: "Investment" }));
+
 
     navigate("/"); 
   }
