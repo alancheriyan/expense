@@ -1,0 +1,62 @@
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+  }
+  
+  .profile-image {
+    width: 40px; /* Adjust size as needed */
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .profile-text {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-text .greeting {
+    font-family: "Delius", serif;
+    font-size: 15px;
+    color: gray;
+    margin-bottom: -2px;
+  }
+  
+  .profile-text .name {
+    font-size: 22px;
+    font-weight: bold;
+    font-family: "Delius", serif;
+  }
+
+  .statistics-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 20px;
+  }
+  
+  .statistics-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    font-family: "Delius", serif;
+  }
+  
+  .statistics-dropdown {
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    font-family: "Delius", serif;
+  }
+  
+  .dropdown-icon {
+    font-size: 12px;
+    margin-left: 4px;
+  }
+  
+  
