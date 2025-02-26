@@ -125,3 +125,19 @@
 .custom-segmented .ant-segmented-item:not(.ant-segmented-item-selected) {
   transition: background-color 0.3s ease-in-out !important; /* Ensure the transition for unselected items too */
 }
+
+
+.fixed-header {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1000;
+  padding-bottom: 10px;
+}
+
+
+.listButton{
+  max-height: 622px;
+  overflow: auto;
+  padding-right: 10px; 
+}

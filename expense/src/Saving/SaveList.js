@@ -103,11 +103,7 @@ export const SaveList = ({ dataList, currentDate, savingType }) => {
         </>
       )}
       <div
-        style={{
-          maxHeight: "660px",
-          overflowY: "auto", 
-          paddingRight: "10px", 
-        }}
+        className="listButton"
       >
         <Form form={form} layout="vertical">
           {items.length > 0 ? (

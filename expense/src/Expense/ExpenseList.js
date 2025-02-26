@@ -105,11 +105,7 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
         </>
       )}
       <div
-        style={{
-          maxHeight: "660px",
-          overflowY: "auto", 
-          paddingRight: "10px", 
-        }}
+        className="listButton"
       >
         <Form form={form} layout="vertical">
           {items.length > 0 ? (
