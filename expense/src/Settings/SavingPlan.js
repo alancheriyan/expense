@@ -11,6 +11,9 @@ const SavingPlan = ({ showHeading }) => {
       updateAction={updateSaving}
       addAction={addSaving}
       showHeading={showHeading}
+      showAmount={true}
+      AmountText="Goal"
+      amountFieldName="goalAmount"
     />
   );
 };

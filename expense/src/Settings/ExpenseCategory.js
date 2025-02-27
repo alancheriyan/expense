@@ -11,6 +11,9 @@ const ExpenseCategory = ({ showHeading }) => {
       updateAction={updateCategory}
       addAction={addCategory}
       showHeading={showHeading}
+      showAmount={true}
+      AmountText="Budget"
+      amountFieldName="budget"
     />
   );
 };

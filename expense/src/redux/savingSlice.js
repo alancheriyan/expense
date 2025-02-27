@@ -62,6 +62,9 @@ export const updateSaving = createAsyncThunk(
       else if (field === "status") {
         updateData.isActive = value;
       }
+      else if (field === "goalAmount") {
+        updateData.goalAmount = value;
+      }
 
       await updateDoc(doc(db, dbSetting.SavingTable, id), updateData);
       

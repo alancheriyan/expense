@@ -12,11 +12,14 @@ const EditableList = ({
   updateAction, 
   addAction, 
   fieldName = "name",
-  showHeading = true 
+  showHeading = true,
+  showAmount = false,
+  AmountText = "Amount", 
+  amountFieldName = "amount"
 }) => {
   const dispatch = useDispatch();
   const { data = [], loading, error } = useSelector(dataSelector);
-  const [isDisplayHeading, setIsDisplayHeading] = useState(true);
+  const [isDisplayHeading, setIsDisplayHeading] = useState(showHeading);
   const [editedValues, setEditedValues] = useState({});
 
   useEffect(() => {
@@ -31,20 +34,19 @@ const EditableList = ({
   }, [error]);
 
   useEffect(() => {
-    if (showHeading !== undefined) {
-      setIsDisplayHeading(showHeading);
-    }
-  }, []);
+    setIsDisplayHeading(showHeading);
+  }, [showHeading]);
 
-  // Local input change handler
-  const handleInputChange = (id, value) => {
-    setEditedValues((prev) => ({ ...prev, [id]: value }));
+  // Handles input changes for both name and amount fields
+  const handleInputChange = (id, value, field) => {
+    setEditedValues((prev) => ({ ...prev, [`${id}_${field}`]: value }));
   };
 
   // Blur handler to update Redux state
-  const handleInputBlur = (id) => {
-    if (editedValues[id] !== undefined && editedValues[id] !== "") {
-      dispatch(updateAction({ id, field: fieldName, value: editedValues[id] }));
+  const handleInputBlur = (id, field) => {
+    const editedValue = editedValues[`${id}_${field}`];
+    if (editedValue !== undefined && editedValue !== "") {
+      dispatch(updateAction({ id, field, value: editedValue }));
     }
   };
 
@@ -66,17 +68,34 @@ const EditableList = ({
 
       <div style={{ marginBottom: "20px" }}>
         {data.map((item) => (
-          <Row key={item.id} align="middle" style={{ marginBottom: "10px" }}>
-            <Col flex="auto">
+          <Row key={item.id} align="middle" style={{ marginBottom: "10px" }} gutter={[8, 0]}>
+            {/* Name Input Column */}
+            <Col flex={showAmount ? "55%" : "auto"}>
               <Input
-                value={editedValues[item.id] !== undefined ? editedValues[item.id] : item[fieldName]}
-                onChange={(e) => handleInputChange(item.id, e.target.value)}
-                onBlur={() => handleInputBlur(item.id)}
+                value={editedValues[`${item.id}_${fieldName}`] ?? item[fieldName]}
+                onChange={(e) => handleInputChange(item.id, e.target.value, fieldName)}
+                onBlur={() => handleInputBlur(item.id, fieldName)}
                 placeholder={`Enter ${title}`}
                 className="delius-regular"
               />
             </Col>
-            <Col flex="40px" style={{ textAlign: "center" }}>
+
+            {/* Amount Input Column (Only if showAmount is true) */}
+            {showAmount && (
+              <Col flex="35%">
+                <Input
+                  value={editedValues[`${item.id}_${amountFieldName}`] ?? item[amountFieldName]}
+                  onChange={(e) => handleInputChange(item.id, e.target.value, amountFieldName)}
+                  onBlur={() => handleInputBlur(item.id, amountFieldName)}
+                  placeholder={AmountText}
+                  className="delius-regular"
+                  type="number"
+                />
+              </Col>
+            )}
+
+            {/* Delete Icon Column */}
+            <Col flex="10%" style={{ textAlign: "center" }}>
               <Popconfirm
                 title={`Are you sure you want to delete this ${title}?`}
                 onConfirm={() => handleDeleteRow(item.id)}

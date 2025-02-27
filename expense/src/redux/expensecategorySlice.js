@@ -63,6 +63,8 @@ export const updateCategory = createAsyncThunk(
         updateData.isActive = true;
       } else if (field === "status") {
         updateData.isActive = value;
+      } else if (field === "budget") {
+        updateData.budget = value;
       }
 
       await updateDoc(doc(db, dbSetting.CategoryTable, id), updateData);
