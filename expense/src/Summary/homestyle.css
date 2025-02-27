@@ -59,4 +59,16 @@
     margin-left: 4px;
   }
   
-  
+  .statistics-card {
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  .statistics-card-category{
+    padding: 0px !important;
+  }
+
+  .ant-card-body{
+    padding: 10px !important;
+  }

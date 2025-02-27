@@ -12,10 +12,8 @@ const CategoryBased = ({ data, totalExpense }) => {
 
   useEffect(() => {
     const unsubscribe = dispatch(subscribeToCategories());
-    console.log("Subscribed to categories...");
 
     return () => {
-      console.log("Unsubscribing from categories...");
       unsubscribe();
     };
   }, [dispatch]);
@@ -49,41 +47,61 @@ const CategoryBased = ({ data, totalExpense }) => {
           percentage: Math.round(percentage),
         };
       })
+      .filter(category => !(category.id === "unknown" && category.percentage === 0))
       .sort((a, b) => (a.id === unknownCategoryId ? -1 : b.total - a.total));
   };
 
-  const categoryStats = calculateCategoryStats(data, categories, totalExpense)
-    .filter(category => !(category.id === "unknown" && category.percentage === 0));
-
+  const categoryStats = calculateCategoryStats(data, categories, totalExpense);
   const colors = ["#ff4d4f", "#40a9ff", "#73d13d", "#faad14", "#722ed1"];
 
   return (
-    <Card style={{ overflowY: "auto", maxHeight: "250px", padding: "10px" }}>
-      {categoryStats.map((category, index) => (
-        <div
-          key={category.id}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-            padding: "10px",
-            borderBottom: "1px solid #f0f0f0",
-          }}
-        >
-          <Progress
-            type="circle"
-            percent={category.percentage}
-            format={(percent) => `${percent}%`}
-            strokeColor={colors[index % colors.length]}
-            width={60}
-          />
-          <div style={{ flex: 1, marginLeft: "10px" }}>
-            <h4 style={{ margin: 0, color: colors[index % colors.length] }}>{category.name}</h4>
-            <p style={{ margin: 0 }}>Total Spent: ${Number(category.total).toFixed(2)}</p>
+    <Card style={{ overflowX: "auto", whiteSpace: "nowrap", padding: "10px" }} className="statistics-card statistics-card-category">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "stretch",
+          gap: "10px",
+        }}
+        
+      >
+        {categoryStats.map((category, index) => (
+          <div
+            key={category.id}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "150px", // Ensures the width adjusts
+              padding: "10px",
+              borderRight: "2px solid #f0f0f0",
+              whiteSpace: "normal", // Allows wrapping of text if needed
+            }}
+          >
+            <Progress
+              type="circle"
+              percent={category.percentage}
+              format={(percent) => `${percent}%`}
+              strokeColor={colors[index % colors.length]}
+              width={60}
+            />
+            <h4
+              style={{
+                margin: "10px 0 5px",
+                color: colors[index % colors.length],
+                wordWrap: "break-word", // Prevents long names from overflowing
+                textAlign: "center", // Center-align the text
+              }}
+            >
+              {category.name}
+            </h4>
+            <p style={{ margin: 0, fontSize: "14px" }}>
+              Total : ${Number(category.total).toFixed(2)}
+            </p>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </Card>
   );
 };
