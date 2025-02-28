@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Row, Col, Typography,Empty } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { db } from "../DataAcess/firebase"; // Import your Firebase configuration
+import { db } from "../DataAcess/firebase";
 import {
   collection,
   addDoc,
@@ -43,6 +43,10 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
     }
   };
 
+  useEffect(()=>{
+    setItems(dataList)
+  },[dataList,currentDate])
+
   const handleDeleteRow = async (index) => {
     const item = items[index];
     if (item.id) {
@@ -56,11 +60,11 @@ export const ExpenseList = ({ dataList, currentDate, categories,paymentTypes }) 
   };
 
   const handleInputChange = async (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = value;
-    setItems(updatedItems);
-    // Update Firestore document
-    const item = updatedItems[index];
+  const updatedItems = [...items];
+  updatedItems[index] = { ...updatedItems[index], [field]: value };
+  setItems(updatedItems);
+  const item = updatedItems[index];
+
     if (item.id) {
       try {
         await updateDoc(doc(db, dbSetting.ExpenseTable, item.id), {

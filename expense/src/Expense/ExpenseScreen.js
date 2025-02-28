@@ -1,72 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import {  Spin } from 'antd';
 import { ExpenseList } from './ExpenseList';
-import { fetchExpenses } from '../DataAcess/DataAccess';
 import { useSelector, useDispatch } from 'react-redux';
 import { subscribeToCategories } from '../redux/expensecategorySlice';
 import { subscribeToPaymentTypes } from '../redux/paymentTypeSlice';
+import { subscribeToexpenseDetails } from '../redux/expenseSlice';
 
-const ExpenseScreen = ({currentDate}) => {
+
+const ExpenseScreen = ({ currentDate }) => {
   const dispatch = useDispatch();
-
-  const { data: categories = [], loading: categoriesLoading } = useSelector(
-    (state) => state.categories
-  );
-  const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector(
-    (state) => state.paymentTypes
-  );
-
+  const { data: categories = [], loading: categoriesLoading } = useSelector(state => state.categories);
+  const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector(state => state.paymentTypes);
+  const { data: expensesAllList = [], loading: expensesLoading } = useSelector(state => state.expenses);
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const fetchExpenseData = async (date) => {
-    setLoading(true);
-    try {
-      const expensesData = await fetchExpenses(date);
-      setExpenses(expensesData);
-    } catch (error) {
-      console.error('Error expense load:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const [isLoading,setIsLoading]=useState(true);
+  
   useEffect(() => {
-    fetchExpenseData(new Date(currentDate));
-  }, [currentDate, paymentTypes]);
+    setIsLoading(true);
+    const filteredExpenses = expensesAllList.filter(expense => new Date(expense.date).toDateString() === new Date(currentDate).toDateString());
+    setExpenses(filteredExpenses);
+    setIsLoading(false);
+  }, [currentDate, expensesAllList,categories,paymentTypes]);
 
   useEffect(() => {
     const unsubscribeCategories = dispatch(subscribeToCategories());
     const unsubscribePayments = dispatch(subscribeToPaymentTypes());
+    const unsubscribeExpenses = dispatch(subscribeToexpenseDetails());
 
     return () => {
       unsubscribeCategories();
       unsubscribePayments();
+      unsubscribeExpenses();
     };
   }, [dispatch]);
 
   return (
     <div className="container">
-
-      <div className="expense-list" style={{ marginTop: '10px' }}>
-        {paymentTypesLoading || categoriesLoading || loading ? (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '50vh',
-            }}
-          >
+      <div className="expense-list" style={{ marginTop: "10px" }}>
+        {paymentTypesLoading || categoriesLoading || expensesLoading || isLoading ? (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
             <Spin size="large" />
           </div>
         ) : (
-          <ExpenseList
-            dataList={expenses}
-            currentDate={currentDate}
-            categories={categories}
-            paymentTypes={paymentTypes}
-          />
+          <ExpenseList dataList={expenses} categories={categories} paymentTypes={paymentTypes} currentDate={currentDate}/>
         )}
       </div>
     </div>
@@ -74,3 +50,4 @@ const ExpenseScreen = ({currentDate}) => {
 };
 
 export default ExpenseScreen;
+

@@ -8,7 +8,8 @@ const prodDatabase={
     PaymentTypeTable:"tblPaymentType",
     IncomeTypeTable:"tblIncomeType",
     SavingTable:"tblSavingPlanType",
-    SavingMasterTable:"tblSaving"
+    SavingMasterTable:"tblSaving",
+    TransactionMaster:"tblTransactionMaster"
 }
 
 const devDatabase={

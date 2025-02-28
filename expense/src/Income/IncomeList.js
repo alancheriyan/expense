@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Row, Col, Typography,Empty  } from "antd";
+import { Form, Input, Button, Row, Col, Typography,Empty  } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { db } from "../DataAcess/firebase"; 
 import {
@@ -14,7 +14,6 @@ import {
 import { dbSetting } from "../DataAcess/dbSetting";
 import CustomizedSelectWithScrollList from "../Components/CustomizedSelectWithScrollList";
 
-const { Option } = Select;
 const { Title } = Typography;
 
 export const IncomeList = ({ dataList, currentDate, categories }) => {
@@ -42,6 +41,11 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
       console.error("Error adding document: ", error);
     }
   };
+
+    useEffect(()=>{
+      setItems(dataList)
+    },[dataList,currentDate])
+  
 
   const handleDeleteRow = async (index) => {
     const item = items[index];

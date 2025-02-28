@@ -10,6 +10,8 @@ import {  addCategory } from "../redux/expensecategorySlice";
 import { addIncomeType } from "../redux/incomeTypeSlice";
 import { addPaymentType } from "../redux/paymentTypeSlice";
 import { addSaving } from "../redux/savingSlice";
+import { addTransactionDetails } from "../redux/transactionSlice";
+
 
 const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
@@ -79,6 +81,7 @@ const SignUpPage = () => {
     dispatch(addPaymentType({ value: "MasterCard" }));
 
     dispatch(addSaving({ value: "Investment" }));
+    dispatch(addTransactionDetails());
 
 
     navigate("/"); 
