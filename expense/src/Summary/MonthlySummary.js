@@ -79,7 +79,6 @@ const MonthlySummary = () => {
       }));
 
       setSavings(expensesData);
-      console.log(expensesData);
 
     } catch (error) {
       console.error("Error fetching expenses:", error);

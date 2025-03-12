@@ -25,16 +25,24 @@ const SavingCategoryBased = ({ data }) => {
       </div>
     );
 
-  // Merge savings data with plan names
-  const mergedData = data.map((item) => {
-    const plan = savingPlanType.find((p) => p.id === item.savingTypeId);
-    return {
-      ...item,
-      name: plan ? plan.name : "Unknown",
-      goal: plan?.goalAmount ?? null, // Set goalAmount to null if not available
-      amount: item.amount ?? 0, // Ensure amount exists
-    };
-  });
+    const savingsMap = {};
+
+    data.forEach((item) => {
+      if (!savingsMap[item.savingTypeId]) {
+        savingsMap[item.savingTypeId] = { ...item, amount: 0 };
+      }
+      savingsMap[item.savingTypeId].amount += Number(item.amount) || 0;
+    });
+    
+    const mergedData = Object.values(savingsMap).map((item) => {
+      const plan = savingPlanType.find((p) => p.id === item.savingTypeId);
+      return {
+        ...item,
+        name: plan ? plan.name : "Unknown",
+        goal: plan?.goalAmount ?? null,
+      };
+    });
+    
 
   // Sort by highest amount
   const sortedData = mergedData.sort((a, b) => b.amount - a.amount);
