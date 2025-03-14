@@ -3,6 +3,9 @@ import { Button, Drawer, Input, Select, Card, Spin, Row, Col,Popconfirm } from "
 import { useSelector, useDispatch } from "react-redux";
 import { PlusCircleOutlined, EditOutlined,DeleteOutlined } from "@ant-design/icons";
 import { subscribeToPaymentTypes } from '../redux/paymentTypeSlice';
+import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice';
+import { subscribeToexpenseDetails } from '../redux/expenseSlice';
+import { subscribeToincomeDetails } from '../redux/incomeSlice';
 import { subscribeToBankingDetails, addBankingDetails, updateBankingDetails, deleteBankingDetails } from '../redux/bankingSlice';
 
 const FinancialInstitution = () => {
@@ -21,24 +24,95 @@ const FinancialInstitution = () => {
     { id: "HKYWCkRF8ic8Y1EyrRI4", name: "Savings" }
   ];
 
+  const [loading,setLoading]=useState(false);
   const dispatch = useDispatch();
+  const [data,setData]=useState([]);
   const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector(state => state.paymentTypes);
   const { data: tblBanking = [], loading: bankingLoading } = useSelector(state => state.bankingData);
+  const { data: expenses = [] } = useSelector(state => state.expenses);
+  const { data: incomes = [], loading: incomesLoading } = useSelector(state => state.incomes);
+  const { data: incomeTypes = [], loading: incomeTypesLoading } = useSelector(state => state.incomeTypes);
 
   useEffect(() => {
     const unsubscribePaymentsPromise = dispatch(subscribeToPaymentTypes());
     const unsubscribeBankingPromise = dispatch(subscribeToBankingDetails());
+    const unsubscribeToexpensePromise = dispatch(subscribeToexpenseDetails());
+    const unsubscribeToincomePromise = dispatch(subscribeToincomeDetails());
+    const unsubscribeToincomeTypePromise = dispatch(subscribeToIncomeTypes());
 
     return () => {
       unsubscribePaymentsPromise();
       unsubscribeBankingPromise();
+      unsubscribeToexpensePromise();
+      unsubscribeToincomePromise();
+      unsubscribeToincomeTypePromise();
     };
   }, [dispatch]);
 
+  
+  useEffect(() => {
+    setupBankingData();
+  }, [tblBanking, expenses,incomes]);
+  
+  useEffect(()=>{
+
+  },[data])
+
+  
+  const setupBankingData = () => {
+    if (tblBanking.length === 0) return;
+    setLoading(true);
+  
+    const updatedBankingData = tblBanking.map((institution) => {
+      let paymentType = institution.type;
+      
+      // Filter related expenses
+      const relatedExpenses = expenses.filter(
+        (expense) =>
+          expense.paymentTypeId === institution.paymentTypeId &&
+          new Date(expense.updatedOn) >= new Date(institution.updatedOn)
+      );
+
+      // Filter related incomes
+      const incomeTypes = institution.incomeTypes || [];
+      const relatedIncome = incomes.filter(
+        (income) =>
+          incomeTypes.includes(income.categoryId) &&
+          new Date(income.updatedOn) >= new Date(institution.updatedOn)
+      );
+
+
+      // Calculate total expenses & incomes
+      const totalExpenses = relatedExpenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
+      const totalIncomes = relatedIncome.reduce((acc, income) => acc + Number(income.amount), 0);
+
+      // Copy institution object
+      const updatedInstitution = { ...institution };
+
+      // Update balance based on type
+      if (paymentType === 'C5IcO138DiV7gDRgyzqD') {
+        updatedInstitution.balance += totalExpenses;  
+      } else if (paymentType === 'NhW0yn579WguMoGpRDjU') {
+        updatedInstitution.balance -= totalExpenses;  
+        updatedInstitution.balance += totalIncomes;  
+      }
+
+      // Ensure balance is never negative
+      updatedInstitution.balance = Math.max(0, updatedInstitution.balance);
+
+      return updatedInstitution;  
+    });
+    // Set the updated banking data
+    setData(updatedBankingData);
+    setLoading(false);
+};
+
+  
+  
   const handleOpen = () => {
     setVisible(true);
-    setEditingId(null);  // Ensure it's a new entry
-    setFormData({ name: "", type: "", paymentTypeId: "", balance: "" }); // Clear form
+    setEditingId(null);
+    setFormData({ name: "", type: "", paymentTypeId: "", balance: "",incomeTypes:[] });
   };
 
   const handleClose = () => setVisible(false);
@@ -48,13 +122,14 @@ const FinancialInstitution = () => {
   };
 
   const handleSave = () => {
+    console.log(formData)
     if (editingId) {
       dispatch(updateBankingDetails({ id: editingId, data: formData }));
     } else {
       dispatch(addBankingDetails({ data: formData }));
     }
     handleClose();
-    setFormData({ name: "", type: "", paymentTypeId: "", balance: "" }); // Reset form
+    setFormData({ name: "", type: "", paymentTypeId: "", balance: "",incomeTypes:[] });
   };
 
   const handleDelete  =(id)=>{
@@ -68,11 +143,12 @@ const FinancialInstitution = () => {
       type: institution.type,
       paymentTypeId: institution.paymentTypeId,
       balance: institution.balance,
+      incomeTypes:institution.incomeTypes
     });
     setVisible(true);
   };
 
-  if (paymentTypesLoading || bankingLoading) {
+  if (paymentTypesLoading || bankingLoading || loading || incomeTypesLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
         <Spin size="large" />
@@ -139,6 +215,26 @@ const FinancialInstitution = () => {
             </Select>
           </Col>
           <Col span={12}>
+          <label className="delius-regular">Link Income Type</label>
+            <Select
+              mode="multiple"
+              placeholder="Link Income Type"
+              className="delius-regular"
+              value={formData.incomeTypes}
+              onChange={(value) => handleChange("incomeTypes", value)}
+              style={{ width: "100%" }}
+              disabled={formData.type !== "NhW0yn579WguMoGpRDjU"}
+            >
+              {incomeTypes.map((type) => (
+                <Select.Option key={type.id} value={type.id}>
+                   <span className="delius-regular">{type.name}</span>
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+        <Row>
+        <Col span={12}>
             <label className="delius-regular">Current Balance</label>
             <Input
               placeholder="Current Balance"
@@ -155,7 +251,7 @@ const FinancialInstitution = () => {
       </Drawer>
 
       <div style={{ marginTop: 20 }}>
-        {tblBanking.map((institution) => {
+        {data.map((institution) => {
           const typeName = institutionType.find((t) => t.id === institution.type)?.name || "Unknown";
           const paymentTypeName = paymentTypes.find((p) => p.id === institution.paymentTypeId)?.name || "Unknown";
 
@@ -171,7 +267,7 @@ const FinancialInstitution = () => {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 14 }} className="delius-heading ">{institution.institutionName}</span>
+                <span style={{ fontSize: 20 }} className="delius-heading ">{institution.institutionName}</span>
                 <div>
                     <EditOutlined style={{ cursor: "pointer", fontSize: 14, marginRight: 10 }} onClick={() => handleEdit(institution)} />
                     <Popconfirm
@@ -186,13 +282,13 @@ const FinancialInstitution = () => {
               </div>
 
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
-                <span style={{ color: "green",  fontSize: 12, background: "#e6f4ea", padding: "3px 6px", borderRadius: 6 }} className="delius-heading">
-                  Balance: {institution.balance}
+                <span style={{ color: "green",  fontSize: 16, background: "#e6f4ea", padding: "3px 6px", borderRadius: 6 }} className="delius-heading">
+                  Balance: ${institution.balance}
                 </span>
-                <span style={{ fontSize: 12, color: "#555" }}>Type: {typeName}</span>
+                <span style={{ fontSize: 14, color: "#555" }}>Type: {typeName}</span>
               </div>
 
-              <p style={{ fontSize: 12, color: "#666", marginTop: 4 }} className="delius-regular">Linked Payment: {paymentTypeName}</p>
+              <p style={{ fontSize: 14, color: "#666", marginTop: 4 }} className="delius-regular">Linked Payment: {paymentTypeName}</p>
             </Card>
           );
         })}

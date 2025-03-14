@@ -49,19 +49,18 @@ export const addBankingDetails = createAsyncThunk(
       if (!data) return rejectWithValue("No data found");
   
       try {
-        const currentDateTimestamp = Timestamp.fromDate(new Date());
         const newDocRef = await addDoc(collection(db, dbSetting.BankingTable), {
           institutionName: data.name,
           balance: data.balance,
           type: data.type,
           paymentTypeId: data.paymentTypeId,
-          date: currentDateTimestamp,
+          incomeTypes:data.incomeTypes,
           createdOn: serverTimestamp(),
           updatedOn: serverTimestamp(),
           userId,
         });
   
-        return { id: newDocRef.id, userId, ...data, date: currentDateTimestamp };
+        return { id: newDocRef.id, userId, ...data };
       } catch (error) {
         return rejectWithValue(error.message);
       }
@@ -79,6 +78,7 @@ export const addBankingDetails = createAsyncThunk(
           institutionName: data.name,
           balance: data.balance,
           type: data.type,
+          incomeTypes:data.incomeTypes,
           paymentTypeId: data.paymentTypeId,
           updatedOn: serverTimestamp(),
         };
@@ -97,7 +97,6 @@ export const addBankingDetails = createAsyncThunk(
 export const deleteBankingDetails = createAsyncThunk(
   "banking/deleteBanking",
   async (id, { rejectWithValue }) => {
-    debugger;
     try {
       await deleteDoc(doc(db, dbSetting.BankingTable, id));
       return id;
