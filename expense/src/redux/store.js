@@ -6,6 +6,8 @@ import savingReducer  from "./savingSlice";
 import transactionReducer from "./transactionSlice";
 import expenseReducer from "./expenseSlice";
 import incomeReducer from "./incomeSlice";
+import bankingReducer from "./bankingSlice";
+
 
 const store = configureStore({
   reducer: {
@@ -15,7 +17,8 @@ const store = configureStore({
     savingPlanType:savingReducer,
     transaction:transactionReducer,
     expenses:expenseReducer,
-    incomes:incomeReducer
+    incomes:incomeReducer,
+    bankingData:bankingReducer,
   },
 });
 

@@ -22,7 +22,7 @@ const { Content } = Layout;
 const Transaction = lazy(() => import("./Transaction/Transaction"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
-const BalanceSheet = lazy(() => import("./Banking/BalanceSheet"));
+const BalanceSheet = lazy(() => import("./Banking/FinancialInstitution"));
 
 const SignUpPage =lazy(() => import("./Login/SignUpPage"));
 const LoginPage =lazy(() => import("./Login/LoginPage"));
