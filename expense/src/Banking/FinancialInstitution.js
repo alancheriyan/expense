@@ -30,7 +30,7 @@ const FinancialInstitution = () => {
   const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector(state => state.paymentTypes);
   const { data: tblBanking = [], loading: bankingLoading } = useSelector(state => state.bankingData);
   const { data: expenses = [] } = useSelector(state => state.expenses);
-  const { data: incomes = [], loading: incomesLoading } = useSelector(state => state.incomes);
+  const { data: incomes = [] } = useSelector(state => state.incomes);
   const { data: incomeTypes = [], loading: incomeTypesLoading } = useSelector(state => state.incomeTypes);
 
   useEffect(() => {
@@ -54,15 +54,11 @@ const FinancialInstitution = () => {
     setupBankingData();
   }, [tblBanking, expenses,incomes]);
   
-  useEffect(()=>{
-
-  },[data])
-
   
   const setupBankingData = () => {
     if (tblBanking.length === 0) return;
     setLoading(true);
-  
+
     const updatedBankingData = tblBanking.map((institution) => {
       let paymentType = institution.type;
       
@@ -88,7 +84,7 @@ const FinancialInstitution = () => {
 
       // Copy institution object
       const updatedInstitution = { ...institution };
-
+      updatedInstitution.balance = Number(updatedInstitution.balance);
       // Update balance based on type
       if (paymentType === 'C5IcO138DiV7gDRgyzqD') {
         updatedInstitution.balance += totalExpenses;  
@@ -122,7 +118,6 @@ const FinancialInstitution = () => {
   };
 
   const handleSave = () => {
-    console.log(formData)
     if (editingId) {
       dispatch(updateBankingDetails({ id: editingId, data: formData }));
     } else {

@@ -9,8 +9,7 @@ import {
   query,
   where,
   onSnapshot,
-  orderBy,
-  Timestamp,
+  orderBy
 } from "firebase/firestore";
 import { db } from "../DataAcess/firebase";
 import { dbSetting } from "../DataAcess/dbSetting";
@@ -72,22 +71,28 @@ export const addBankingDetails = createAsyncThunk(
     "banking/updateBanking",
     async ({ id, data }, { rejectWithValue }) => { 
       if (!id) return rejectWithValue("ID is required for updating.");
-      if (!data) return rejectWithValue("No data found.");
+      if (!data) return rejectWithValue("No data provided.");
+  
       try {
-        const updateData = {
-          institutionName: data.name,
-          balance: data.balance,
-          type: data.type,
-          incomeTypes:data.incomeTypes,
-          paymentTypeId: data.paymentTypeId,
+        let updateData = {
+          institutionName: data?.name || "",
+          balance: Number(data?.balance) || 0, // Ensure balance is a number
+          type: data?.type || "",
+          paymentTypeId: data?.paymentTypeId || "",
           updatedOn: serverTimestamp(),
         };
   
+        // Include incomeTypes only if it exists
+        if (data?.incomeTypes !== undefined) {
+          updateData.incomeTypes = data.incomeTypes;
+        }
+  
         await updateDoc(doc(db, dbSetting.BankingTable, id), updateData);
   
-        return { id, ...data };
+        return { id, ...updateData }; // Return updated data
       } catch (error) {
-        return rejectWithValue(error.message);
+        console.error("Error updating banking details:", error);
+        return rejectWithValue(error.message || "Failed to update banking details.");
       }
     }
   );
