@@ -62,14 +62,12 @@ const FinancialInstitution = () => {
     const updatedBankingData = tblBanking.map((institution) => {
       let paymentType = institution.type;
       
-      // Filter related expenses
       const relatedExpenses = expenses.filter(
         (expense) =>
           expense.paymentTypeId === institution.paymentTypeId &&
           new Date(expense.updatedOn) >= new Date(institution.updatedOn)
       );
 
-      // Filter related incomes
       const incomeTypes = institution.incomeTypes || [];
       const relatedIncome = incomes.filter(
         (income) =>
@@ -77,15 +75,12 @@ const FinancialInstitution = () => {
           new Date(income.updatedOn) >= new Date(institution.updatedOn)
       );
 
-
-      // Calculate total expenses & incomes
       const totalExpenses = relatedExpenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
       const totalIncomes = relatedIncome.reduce((acc, income) => acc + Number(income.amount), 0);
 
-      // Copy institution object
       const updatedInstitution = { ...institution };
       updatedInstitution.balance = Number(updatedInstitution.balance);
-      // Update balance based on type
+
       if (paymentType === 'C5IcO138DiV7gDRgyzqD') {
         updatedInstitution.balance += totalExpenses;  
       } else if (paymentType === 'NhW0yn579WguMoGpRDjU') {
@@ -93,12 +88,12 @@ const FinancialInstitution = () => {
         updatedInstitution.balance += totalIncomes;  
       }
 
-      // Ensure balance is never negative
-      updatedInstitution.balance = Math.max(0, updatedInstitution.balance);
+      updatedInstitution.balance = parseFloat(Math.max(0, updatedInstitution.balance).toFixed(2));
+
 
       return updatedInstitution;  
     });
-    // Set the updated banking data
+
     setData(updatedBankingData);
     setLoading(false);
 };
@@ -142,6 +137,17 @@ const FinancialInstitution = () => {
     });
     setVisible(true);
   };
+
+  const getFormatedDate=(date)=>{
+    return new Date(date).toLocaleString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    }).replace(",", "").replace(" AM", "am").replace(" PM", "pm");
+  }
 
   if (paymentTypesLoading || bankingLoading || loading || incomeTypesLoading) {
     return (
@@ -234,6 +240,9 @@ const FinancialInstitution = () => {
             <Input
               placeholder="Current Balance"
               type="number"
+              step="0.01"
+               min="0"
+               inputMode="decimal"
               className="delius-regular"
               value={formData.balance}
               onChange={(e) => handleChange("balance", e.target.value)}
@@ -249,7 +258,7 @@ const FinancialInstitution = () => {
         {data.map((institution) => {
           const typeName = institutionType.find((t) => t.id === institution.type)?.name || "Unknown";
           const paymentTypeName = paymentTypes.find((p) => p.id === institution.paymentTypeId)?.name || "Unknown";
-
+          const updatedOn = getFormatedDate(institution.updatedOn)
           return (
             <Card
               key={institution.id}
@@ -284,6 +293,7 @@ const FinancialInstitution = () => {
               </div>
 
               <p style={{ fontSize: 14, color: "#666", marginTop: 4 }} className="delius-regular">Linked Payment: {paymentTypeName}</p>
+              <p style={{ fontSize: 14, color: "#666", marginTop: 4 }} className="delius-regular">Last Updated On: {updatedOn}</p>
             </Card>
           );
         })}
