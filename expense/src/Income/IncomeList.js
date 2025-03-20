@@ -60,11 +60,12 @@ export const IncomeList = ({ dataList, currentDate, categories }) => {
   };
 
   const handleInputChange = async (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = value;
-    setItems(updatedItems);
+    const updatedItems = [...items]; 
+    const updatedItem = { ...updatedItems[index] }; 
+  
+    updatedItem[field] = value; 
+    updatedItems[index] = updatedItem; 
 
-    // Update Firestore document
     const item = updatedItems[index];
     if (item.id) {
       try {

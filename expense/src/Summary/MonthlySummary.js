@@ -17,7 +17,6 @@ const MonthlySummary = () => {
   const [totalIncome, setTotalIncome] = useState(0);
   const [expenses,setExpenses]=useState([]);
   const [savings,setSavings]=useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const fetchExpenses = async (month) => {
     try {
@@ -59,11 +58,7 @@ const MonthlySummary = () => {
 
   const fetchSaving = async (month) => {
     try {
-      const startOfMonth = new Date(new Date().getFullYear(), month - 1, 1); // Start of month
-      const endOfMonth = new Date(new Date().getFullYear(), month, 0, 23, 59, 59, 999); // End of month
-  
-      const startTimestamp = Timestamp.fromDate(startOfMonth);
-      const endTimestamp = Timestamp.fromDate(endOfMonth);
+
       const expensesCollection = collection(db, dbSetting.SavingMasterTable);
   
       // Use query to combine where conditions
@@ -133,7 +128,6 @@ const MonthlySummary = () => {
   ];
 
   useEffect(() => {
-      setIsLoading(true);
       const storedUserInfo = JSON.parse(localStorage.getItem("userInfo"));
   
       if (storedUserInfo) {
@@ -143,7 +137,6 @@ const MonthlySummary = () => {
         });
       }
       fetchSaving(selectedMonth);
-      setIsLoading(false);
 
     }, []);
 
