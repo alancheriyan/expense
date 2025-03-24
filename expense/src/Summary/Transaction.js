@@ -12,7 +12,7 @@ import "./homestyle.css";
 
 const { Text } = Typography;
 
-const Transaction = ({ handleClick }) => {
+const Transaction = ({ handleClick,displayBackButton=true,count=0 }) => {
   const dispatch = useDispatch();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const { data: paymentTypes = [], loading: paymentTypesLoading } = useSelector((state) => state.paymentTypes);
@@ -40,9 +40,9 @@ const Transaction = ({ handleClick }) => {
 
   const CreateTransactionInfo = () => {
 
-    const transactions = [
+    let transactions = [
       ...expenses
-        .filter((expense) => expense.amount?.trim() && new Date(expense.createdOn).getMonth() + 1 === selectedMonth)
+        .filter((expense) => expense.amount?.trim() && new Date(expense.date).getMonth() + 1 === selectedMonth)
         .map((expense) => ({
           ...expense,
           type: "expense",
@@ -50,16 +50,19 @@ const Transaction = ({ handleClick }) => {
           paymentTypeName: paymentTypes.find((pay) => pay.id === expense.paymentTypeId)?.name || "Unknown",
         })),
       ...incomes
-        .filter((income) => income.amount?.trim() && new Date(income.createdOn).getMonth() + 1 === selectedMonth)
+        .filter((income) => income.amount?.trim() && new Date(income.date).getMonth() + 1 === selectedMonth)
         .map((income) => ({
         ...income,
         type: "income",
         incomeTypeName: incomeTypes.find((inc) => inc.id === income.categoryId)?.name || "Unknown",
       })),
-    ].sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (transactions.length === 0) {
         return <Empty />;
+      }
+      else  if (count > 0) {
+        transactions = transactions.slice(0, count);
       }
 
     return transactions.map((transaction) => (
@@ -108,14 +111,14 @@ const Transaction = ({ handleClick }) => {
   }
 
   return (
-    <div style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto", paddingBottom: "70px" }}>
-      <Button
+    <div style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom: displayBackButton? "70px":"0px" }}>
+     {displayBackButton && (<div ><Button
         type="text"
         icon={<ArrowLeftOutlined />}
         onClick={handleClick}
         style={{ position: "absolute", top: 35, left: 30, fontSize: "18px" }}
       />
-       <div className="statistics-container" style={{marginTop:"65px"}}>
+      <div className="statistics-container" style={{marginTop:"65px"}}>
        <span className="statistics-title"></span>
         <Dropdown overlay={menu} trigger={["click"]}>
           <span className="statistics-dropdown">
@@ -123,6 +126,8 @@ const Transaction = ({ handleClick }) => {
           </span>
         </Dropdown>
       </div>
+      </div>)} 
+       
       <div >{CreateTransactionInfo()}</div>
     
       <style>{`

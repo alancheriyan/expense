@@ -166,7 +166,9 @@ const MonthlySummary = () => {
       }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div 
+    style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom:  "70px",paddingTop:"20px",paddingLeft:"20px",paddingRight:"20px" }}
+    >
       <div className="profile-container">
         <div className="profile-text">
           <span className="greeting">Hello!</span>
@@ -243,8 +245,16 @@ const MonthlySummary = () => {
    <Button type="link" onClick={handleViewTransaction} >
               <span className="delius-regular" style={{color:"#666"}}>View All</span>
             </Button>
+            
   </span>
+
  </div>
+
+ <div>
+        <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+        <Transaction displayBackButton={false} count={5}/>
+        </Suspense>
+        </div>
     
 
 <div className="statistics-container">
