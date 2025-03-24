@@ -7,6 +7,7 @@ import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice';
 import { subscribeToexpenseDetails } from '../redux/expenseSlice';
 import { subscribeToincomeDetails } from '../redux/incomeSlice';
 import { subscribeToBankingDetails, addBankingDetails, updateBankingDetails, deleteBankingDetails } from '../redux/bankingSlice';
+import {getFormatedDate} from "../DataAcess/CommonMethod"
 
 const FinancialInstitution = () => {
   const [visible, setVisible] = useState(false);
@@ -137,17 +138,6 @@ const FinancialInstitution = () => {
     });
     setVisible(true);
   };
-
-  const getFormatedDate=(date)=>{
-    return new Date(date).toLocaleString("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }).replace(",", "").replace(" AM", "am").replace(" PM", "pm");
-  }
 
   if (paymentTypesLoading || bankingLoading || loading || incomeTypesLoading) {
     return (

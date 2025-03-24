@@ -1,5 +1,5 @@
 import React, { useState, useEffect ,lazy,Suspense} from "react";
-import { Card, Row, Col,Statistic,Spin,Menu,Dropdown  } from "antd";
+import { Card, Row, Col,Statistic,Spin,Menu,Dropdown,Button  } from "antd";
 import {  collection, getDocs ,Timestamp,where,query} from "firebase/firestore";
 import {db} from "../DataAcess/firebase"; 
 import { dbSetting } from "../DataAcess/dbSetting";
@@ -9,6 +9,7 @@ import "./homestyle.css";
 
 const CategoryBased = lazy(() => import("./CategoryBased"));
 const SavingPlanBased = lazy(() => import("./SavingCategorybased"));
+const Transaction = lazy(() => import("./Transaction"));
 
 const MonthlySummary = () => {
    const [user, setUser] = useState(null);
@@ -17,6 +18,7 @@ const MonthlySummary = () => {
   const [totalIncome, setTotalIncome] = useState(0);
   const [expenses,setExpenses]=useState([]);
   const [savings,setSavings]=useState([]);
+  const [isTransactionVisible,setIsTransactionVisible]=useState(false);
 
   const fetchExpenses = async (month) => {
     try {
@@ -120,6 +122,10 @@ const MonthlySummary = () => {
   const handleMenuClick = (e) => {
     setSelectedMonth(parseInt(e.key) + 1); // Convert to 1-based month
   };
+
+  const handleViewTransaction=()=>{
+    setIsTransactionVisible(!isTransactionVisible);
+  }
   
 
   const months = [
@@ -152,6 +158,12 @@ const MonthlySummary = () => {
     </Menu>
     
       );
+
+      if(isTransactionVisible){
+        return(<div>  <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+          <Transaction handleClick={handleViewTransaction} />
+        </Suspense></div>)
+      }
 
   return (
     <div style={{ padding: "20px" }}>
@@ -217,6 +229,7 @@ const MonthlySummary = () => {
 
 <div className="statistics-container">
  <span className="statistics-title">Top Spend</span>
+ 
  </div>
 
 <div>
@@ -224,6 +237,14 @@ const MonthlySummary = () => {
           <CategoryBased data={expenses}  totalExpense={totalExpense}/>
         </Suspense>
         </div>
+        <div className="statistics-container">
+ <span className="statistics-title">Recent Transactions</span>
+ <span className="statistics-dropdown">
+   <Button type="link" onClick={handleViewTransaction} >
+              <span className="delius-regular" style={{color:"#666"}}>View All</span>
+            </Button>
+  </span>
+ </div>
     
 
 <div className="statistics-container">
