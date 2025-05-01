@@ -106,7 +106,7 @@ const Transaction = ({currentDate,onEditTransaction  }) => {
                 }}
                 className="delius-heading"
               >
-                ${transaction.amount}
+                ${Number(transaction.amount || 0).toFixed(2)}
               </Text>
             </Col>
       
