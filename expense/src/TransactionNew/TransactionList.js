@@ -67,26 +67,59 @@ const Transaction = ({currentDate,onEditTransaction  }) => {
         return <Empty />;
       }
 
-    return transactions.map((transaction) => (
-      <Card key={transaction.id} style={{ marginBottom: 10,borderRadius: 10, boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}>
-        <Row justify="space-between" align="middle">
-          <Col span={18}>
-            <span className="delius-heading">{transaction.type === "expense" ? transaction.categoryName : transaction.incomeTypeName}</span>
-            <br />
-            {transaction.type === "expense" && <Text type="secondary" className="delius-regular">{transaction.paymentTypeName}</Text>}
-          </Col>
-          <Col style={{ textAlign: "right" }} span={5}>
-            <Text style={{ color: transaction.type === "expense" ? "rgb(156, 57, 57)" : "rgb(13, 74, 13)" ,paddingRight:"15px"}} className="delius-heading">
-              ${transaction.amount}
-            </Text>
-            <br />
-          </Col>
-          <Col span={1}>
-          <EditOutlined onClick={() => onEditTransaction(transaction)} style={{ cursor: "pointer" }} />
-          </Col>
-        </Row>
-      </Card>
-    ));
+      return transactions.map((transaction) => (
+        <Card
+          key={transaction.id}
+          style={{
+            marginBottom: 10,
+            borderRadius: 10,
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Row justify="space-between" align="middle" gutter={[8, 8]}>
+            <Col xs={12} sm={16}>
+              <span className="delius-heading">
+                {transaction.type === "expense"
+                  ? transaction.categoryName
+                  : transaction.incomeTypeName}
+              </span>
+              <br />
+              {transaction.type === "expense" && (
+                <Text type="secondary" className="delius-regular">
+                  {transaction.paymentTypeName}
+                </Text>
+              )}
+            </Col>
+      
+            <Col
+              xs={10}
+              sm={7}
+              style={{ textAlign: "right" }}
+            >
+              <Text
+                style={{
+                  color:
+                    transaction.type === "expense"
+                      ? "rgb(156, 57, 57)"
+                      : "rgb(13, 74, 13)",
+                  paddingRight: "10px",
+                }}
+                className="delius-heading"
+              >
+                ${transaction.amount}
+              </Text>
+            </Col>
+      
+            <Col xs={2} sm={1} style={{ textAlign: "right" }}>
+              <EditOutlined
+                onClick={() => onEditTransaction(transaction)}
+                style={{ cursor: "pointer" }}
+              />
+            </Col>
+          </Row>
+        </Card>
+      ));
+      
   };
 
 
