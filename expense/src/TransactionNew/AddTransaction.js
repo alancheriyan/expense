@@ -104,6 +104,15 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
   
   }, [dispatch]);
 
+  
+  useEffect(() => {
+    if (drawerVisible) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+  }, [drawerVisible]);
+
   const deleteTransaction = async () => {
     try {
       if (!editData?.id) return;
@@ -158,7 +167,11 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
             label="Amount"
             rules={[{ required: true, message: "Please enter the amount" }]}
           >
-            <Input type="number" style={{ borderRadius: "8px" }} />
+            <Input type="number" style={{ borderRadius: "8px" }} 
+              step="0.01"
+              min="0"
+              inputMode="decimal" 
+            />
           </Form.Item>
 
           {transactionType === "expense" && (

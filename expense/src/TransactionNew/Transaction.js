@@ -69,6 +69,7 @@ const Transaction = () => {
               <AddTransaction currentDate={currentDate} editData={editTransaction}
               onClose={() => setEditTransaction(null)}/>
             </div>
+            
       </div>
      
 
