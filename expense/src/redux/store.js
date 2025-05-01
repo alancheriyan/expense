@@ -3,6 +3,7 @@ import incomeTypeReducer from "./incomeTypeSlice";
 import categoryReducer from "./expensecategorySlice";
 import paymentTypeReducer  from "./paymentTypeSlice";
 import savingReducer  from "./savingSlice";
+import savingMasterReducer  from "./savingMasterSlice";
 import transactionReducer from "./transactionSlice";
 import expenseReducer from "./expenseSlice";
 import incomeReducer from "./incomeSlice";
@@ -19,6 +20,7 @@ const store = configureStore({
     expenses:expenseReducer,
     incomes:incomeReducer,
     bankingData:bankingReducer,
+    savings:savingMasterReducer
   },
 });
 

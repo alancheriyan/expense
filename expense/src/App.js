@@ -19,7 +19,7 @@ import './App.css';
 const { Content } = Layout;
 
 // Lazy-loaded components
-const Transaction = lazy(() => import("./Transaction/Transaction"));
+const Transaction = lazy(() => import("./TransactionNew/Transaction"));
 const SummaryScreen = lazy(() => import("./Summary/SummaryScreen"));
 const Setting = lazy(() => import("./Settings/SettingScreen"));
 const BalanceSheet = lazy(() => import("./Banking/FinancialInstitution"));
