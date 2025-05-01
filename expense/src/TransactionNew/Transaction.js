@@ -64,7 +64,7 @@ const Transaction = () => {
       </div>
       <div style={{width:'100%'}}>
         <TransactionTotal  currentDate={currentDate}/>
-        <div className="scrollable-content"  style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom: "100px"}}>
+        <div className="scrollable-content"  style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom: "250px"}}>
               <TransactionList currentDate={currentDate} onEditTransaction={(transaction) => setEditTransaction(transaction)}/>
               <AddTransaction currentDate={currentDate} editData={editTransaction}
               onClose={() => setEditTransaction(null)}/>
