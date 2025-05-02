@@ -50,6 +50,15 @@ const FinancialInstitution = () => {
     };
   }, [dispatch]);
 
+
+    useEffect(() => {
+      if (visible) {
+        document.body.classList.add("no-scroll");
+      } else {
+        document.body.classList.remove("no-scroll");
+      }
+    }, [visible]);
+
   
   useEffect(() => {
     setupBankingData();

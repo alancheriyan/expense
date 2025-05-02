@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Button, Typography, Row, Col,  theme } from 'antd';
-import AddTransaction from "./AddTransaction"
+import React, { useState,lazy, Suspense } from 'react';
+import { Button, Typography, Row, Col,  theme ,Spin} from 'antd';
 import TransactionList from "./TransactionList"
 import TransactionTotal from './TransactionTotal';
 
 const { Title } = Typography;
+
+const AddTransaction = lazy(() => import("./AddTransaction"));
 
 const Transaction = () => {
   const { token } = theme.useToken();
@@ -66,8 +67,11 @@ const Transaction = () => {
         <TransactionTotal  currentDate={currentDate}/>
         <div className="scrollable-content"  style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom: "250px"}}>
               <TransactionList currentDate={currentDate} onEditTransaction={(transaction) => setEditTransaction(transaction)}/>
-              <AddTransaction currentDate={currentDate} editData={editTransaction}
-              onClose={() => setEditTransaction(null)}/>
+              <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+                  <AddTransaction currentDate={currentDate} editData={editTransaction}
+                  onClose={() => setEditTransaction(null)}/>
+              </Suspense>
+              
             </div>
             
       </div>

@@ -16,7 +16,8 @@ const { Option } = Select;
 
 const AddTransaction = ({currentDate,editData = null, onClose}) => {
   const dispatch = useDispatch();
-  
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   const { data: paymentTypes = [] } = useSelector((state) => state.paymentTypes);
   const { data: expenseCategory = [] } = useSelector((state) => state.categories);
   const { data: incomeTypes = [] } = useSelector((state) => state.incomeTypes);
@@ -149,17 +150,19 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
             buttonStyle="solid"
             style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}
           >
-            <Radio.Button value="expense" style={{ borderRadius: "8px" }}>Expense</Radio.Button>
-            <Radio.Button value="income" style={{ borderRadius: "8px" }}>Income</Radio.Button>
-            <Radio.Button value="saving" style={{ borderRadius: "8px" }}>Saving</Radio.Button>
+            <Radio.Button value="expense" style={{ borderRadius: "8px" }}><span className="delius-regular">Expense</span></Radio.Button>
+            <Radio.Button value="income" style={{ borderRadius: "8px" }}><span className="delius-regular">Income</span></Radio.Button>
+            <Radio.Button value="saving" style={{ borderRadius: "8px" }}><span className="delius-regular">Saving</span></Radio.Button>
           </Radio.Group>
         }
+        height={isMobile ? "90%" : "75%"}
         placement="bottom"
         onClose={closeDrawer}
         open={drawerVisible}
-        height="75%"
-        bodyStyle={{ borderTopLeftRadius: "16px", borderTopRightRadius: "16px", padding: "24px" }}
+        style={{ borderRadius: "12px 12px 0 0" }}
       >
+        <div style={{  maxHeight: "100%", overflowY: "auto" }}>
+
         <Form layout="vertical" form={form} 
         initialValues={{ avoidable: false,comments:"" }}>
           <Form.Item
@@ -167,7 +170,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
             label="Amount"
             rules={[{ required: true, message: "Please enter the amount" }]}
           >
-            <Input type="number" style={{ borderRadius: "8px" }} 
+            <Input type="number"
               step="0.01"
               min="0"
               inputMode="decimal" 
@@ -181,7 +184,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 label="Expense Category"
                 rules={[{ required: true, message: "Please select a category" }]}
               >
-                <Select placeholder="Select Expense Category" style={{ borderRadius: "8px" }}>
+                <Select placeholder="Select Expense Category" className="boxborder">
                   {expenseCategory.map((cat) => (
                     <Option key={cat.id} value={cat.id}>
                       {cat.name}
@@ -195,7 +198,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 label="Payment Type"
                 rules={[{ required: true, message: "Please select payment type" }]}
               >
-                <Select placeholder="Select Payment Type" style={{ borderRadius: "8px" }}>
+                <Select placeholder="Select Payment Type" >
                   {paymentTypes.map((pay) => (
                     <Option key={pay.id} value={pay.id}>
                       {pay.name}
@@ -205,11 +208,11 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
               </Form.Item>
 
               <Form.Item name="comments" label="Comments">
-                <Input.TextArea rows={2} style={{ borderRadius: "8px" }} />
+                <Input.TextArea rows={2}/>
               </Form.Item>
 
               <Form.Item name="avoidable" valuePropName="checked">
-                <Checkbox>Avoidable?</Checkbox>
+                <Checkbox><span className="delius-regular">Avoidable?</span></Checkbox>
               </Form.Item>
             </>
           )}
@@ -221,7 +224,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 label="Income Category"
                 rules={[{ required: true, message: "Please select income type" }]}
               >
-                <Select placeholder="Select Income Type" style={{ borderRadius: "8px" }}>
+                <Select placeholder="Select Income Type" >
                   {incomeTypes.map((income) => (
                     <Option key={income.id} value={income.id}>
                       {income.name}
@@ -231,7 +234,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
               </Form.Item>
 
               <Form.Item name="comments" label="Comments">
-                <Input.TextArea rows={2} style={{ borderRadius: "8px" }} />
+                <Input.TextArea rows={2} className="delius-regular"/>
               </Form.Item>
             </>
           )}
@@ -244,7 +247,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 rules={[{ required: true, message: "Please select income type" }]}
               >
 
-                <Select placeholder="Select Saving Type" style={{ borderRadius: "8px" }}>
+                <Select placeholder="Select Saving Type">
                   {savingTypes.map((savings) => (
                     <Option key={savings.id} value={savings.id}>
                       {savings.name}
@@ -263,7 +266,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
             onClick={() => saveTransaction(false)}
             style={{ marginRight: 8, borderRadius: "8px" }}
           >
-            {editData?.id ?"Update":"Save"}
+            {editData?.id ? (<span className="delius-regular">Update</span>):(<span className="delius-regular">Save</span>)}
           </Button>
           {editData?.id ? (
             <Popconfirm
@@ -273,7 +276,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
               cancelText="No"
             >
               <Button danger style={{ marginRight: 8, borderRadius: "8px" }}>
-                Delete
+                <span className="delius-regular">Delete</span>
               </Button>
             </Popconfirm>
           ) : (
@@ -283,20 +286,22 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
               onClick={() => saveTransaction(true)}
               style={{ marginRight: 8, borderRadius: "8px" }}
             >
-              Save & New
+              <span className="delius-regular">Save & New</span>
             </Button>
              <Button
              danger
              onClick={() => form.resetFields()}
              style={{ borderRadius: "8px" }}
            >
-             Clear
+            <span className="delius-regular">Clear</span>
            </Button>
             </>
            
           )}
          
         </div>
+        </div>
+        
       </Drawer>
     </div>
   );

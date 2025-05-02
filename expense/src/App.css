@@ -141,3 +141,23 @@
   overflow: auto;
   padding-right: 10px; 
 }
+
+.ant-select-single .ant-select-selector {
+  border-radius: 8px !important;
+}
+
+.ant-input{
+  border-radius: 8px !important; 
+}
+
+.ant-form-item .ant-form-item-label{
+  font-family: "Delius", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ant-select-dropdown{
+  font-family: "Delius", serif;
+  font-weight: 400;
+  font-style: normal;
+}
