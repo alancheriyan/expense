@@ -47,7 +47,7 @@ const CategoryBased = ({ data, totalExpense }) => {
           percentage: Math.round(percentage),
         };
       })
-      .filter(category => !(category.id === "unknown" && category.percentage === 0))
+      .filter(category => !(category.id === "unknown") && category.percentage >0)
       .sort((a, b) => (a.id === unknownCategoryId ? -1 : b.total - a.total));
   };
 

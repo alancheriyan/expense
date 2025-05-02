@@ -11,7 +11,6 @@ export const subscribeToPaymentTypes = () => (dispatch) => {
   const paymentTypesQuery = query(
     collection(db, dbSetting.PaymentTypeTable),
     where("userId", "==", userId),
-    where ("isActive","==",true),
     orderBy("createdOn")
   );
 

@@ -10,7 +10,6 @@ export const subscribeToSavings = () => (dispatch) => {
   const savingsQuery = query(
     collection(db, dbSetting.SavingTable),
     where("userId", "==", userId),
-    where("isActive", "==", true),
     orderBy("createdOn")
   );
   return onSnapshot(savingsQuery, (snapshot) => {

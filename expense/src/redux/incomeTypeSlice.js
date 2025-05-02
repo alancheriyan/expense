@@ -11,7 +11,6 @@ export const subscribeToIncomeTypes = () => (dispatch) => {
   const incomeTypesQuery = query(
     collection(db, dbSetting.IncomeTypeTable),
     where("userId", "==", userId),
-    where ("isActive","==",true),
     orderBy("createdOn")
   );
 

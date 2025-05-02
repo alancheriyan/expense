@@ -67,7 +67,9 @@ const EditableList = ({
       )}
 
       <div style={{ marginBottom: "20px" }}>
-        {data.map((item) => (
+        {data
+        .filter((item) => item.isActive)
+        .map((item) => (
           <Row key={item.id} align="middle" style={{ marginBottom: "10px" }} gutter={[8, 0]}>
             {/* Name Input Column */}
             <Col flex={showAmount ? "55%" : "auto"}>

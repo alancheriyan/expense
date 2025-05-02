@@ -10,7 +10,6 @@ export const subscribeToCategories = () => (dispatch) => {
   const categoriesQuery = query(
     collection(db, dbSetting.CategoryTable),
     where("userId", "==", userId),
-    where ("isActive","==",true),
     orderBy("createdOn")
   );
 
