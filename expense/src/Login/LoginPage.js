@@ -103,7 +103,14 @@ const LoginPage = () => {
 
   return (
     <div style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#f0f2f5" }}>
-      <Card style={{ width: 400, padding: "20px", textAlign: "center" }} title="Sign In">
+      <Card style={{
+        width: 400,
+        padding: "20px",
+        textAlign: "center",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        borderRadius: "12px"
+        }} 
+        title="Sign In">
         <Form form={form} name="login" onFinish={onFinish} style={{ maxWidth: 300 }}>
           <Form.Item name="email" rules={[{ required: true, type: "email" }]}>
             <Input placeholder="Email" />
