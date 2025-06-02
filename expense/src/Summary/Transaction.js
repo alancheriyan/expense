@@ -78,7 +78,7 @@ const Transaction = ({ handleClick,displayBackButton=true,count=0 }) => {
               ${transaction.amount}
             </Text>
             <br />
-            <Text type="secondary" className="delius-regular">{getFormatedDate(transaction.createdOn)}</Text>
+            <Text type="secondary" className="delius-regular">{getFormatedDate(transaction.date)}</Text>
           </Col>
         </Row>
       </Card>
@@ -111,7 +111,7 @@ const Transaction = ({ handleClick,displayBackButton=true,count=0 }) => {
   }
 
   return (
-    <div style={{ maxHeight: "calc(100vh - 60px)", overflowY: "auto",paddingBottom: displayBackButton? "70px":"0px" }}>
+    <div style={{ paddingBottom: displayBackButton? "70px":"0px" }}>
      {displayBackButton && (<div ><Button
         type="text"
         icon={<ArrowLeftOutlined />}
@@ -128,7 +128,7 @@ const Transaction = ({ handleClick,displayBackButton=true,count=0 }) => {
       </div>
       </div>)} 
        
-      <div >{CreateTransactionInfo()}</div>
+      <div style={{ maxHeight: "calc(100vh - 250px)", overflowY: "auto", padding: "0 16px" }}>{CreateTransactionInfo()}</div>
     
       <style>{`
         div::-webkit-scrollbar {

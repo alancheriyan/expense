@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import { Progress, Card, Empty } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { subscribeToCategories } from "../redux/expensecategorySlice";
+import { subscribeToIncomeTypes } from "../redux/incomeTypeSlice";
 
-const CategoryBased = ({ data, totalExpense }) => {
+const CategoryBasedIncome = ({ data, totalExpense }) => {
   const dispatch = useDispatch();
     
   const { data: categories = [], loading: categoriesLoading } = useSelector(
-    (state) => state.categories
+    (state) => state.incomeTypes
   );
 
   useEffect(() => {
-    const unsubscribe = dispatch(subscribeToCategories());
+    const unsubscribe = dispatch(subscribeToIncomeTypes());
 
     return () => {
       unsubscribe();
@@ -52,7 +52,7 @@ const CategoryBased = ({ data, totalExpense }) => {
   };
 
   const categoryStats = calculateCategoryStats(data, categories, totalExpense);
-  const colors = ["#ff4d4f", "#40a9ff", "#73d13d", "#faad14", "#722ed1"];
+  const colors = ["#722ed1","#faad14","#73d13d","#40a9ff","#ff4d4f", ];
 
   if(data.length===0){
     return(<Empty/>)
@@ -110,4 +110,4 @@ const CategoryBased = ({ data, totalExpense }) => {
   );
 };
 
-export default CategoryBased;
+export default CategoryBasedIncome;

@@ -1,13 +1,15 @@
 import React, { useState, useEffect ,lazy,Suspense} from "react";
 import { Card, Row, Col,Statistic,Spin,Menu,Dropdown,Button  } from "antd";
-import {  collection, getDocs ,Timestamp,where,query} from "firebase/firestore";
-import {db} from "../DataAcess/firebase"; 
-import { dbSetting } from "../DataAcess/dbSetting";
 import { DownOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { subscribeToexpenseDetails } from "../redux/expenseSlice";
+import { subscribeToincomeDetails } from "../redux/incomeSlice";
+import { subscribeToSavingDetails } from "../redux/savingMasterSlice";
 import "./homestyle.css";
 
 
 const CategoryBased = lazy(() => import("./CategoryBased"));
+const CategoryBasedIncome = lazy(() => import("./CategoryBasedIncome"));
 const SavingPlanBased = lazy(() => import("./SavingCategorybased"));
 const Transaction = lazy(() => import("./Transaction"));
 
@@ -17,107 +19,107 @@ const MonthlySummary = () => {
   const [totalExpense, setTotalExpense] = useState(0);
   const [totalIncome, setTotalIncome] = useState(0);
   const [expenses,setExpenses]=useState([]);
-  const [savings,setSavings]=useState([]);
+  const [incomes,setIncomes]=useState([]);
   const [isTransactionVisible,setIsTransactionVisible]=useState(false);
 
-  const fetchExpenses = async (month) => {
+  const getTotalExpense = async () => {
     try {
-      const startOfMonth = new Date(new Date().getFullYear(), month - 1, 1); // Start of month
-      const endOfMonth = new Date(new Date().getFullYear(), month, 0, 23, 59, 59, 999); // End of month
-  
-      const startTimestamp = Timestamp.fromDate(startOfMonth);
-      const endTimestamp = Timestamp.fromDate(endOfMonth);
-  
-      const expensesCollection = collection(db, dbSetting.ExpenseTable);
-  
-      // Use query to combine where conditions
-      const expensesQuery = query(
-        expensesCollection,
-        where("date", ">=", startTimestamp),
-        where("date", "<=", endTimestamp)
-      );
-  
-      const snapshot = await getDocs(expensesQuery);
-
-      const expensesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setExpenses(expensesData);
-  
-      const filteredExpenses = snapshot.docs.map((doc) => doc.data());
-      const total = filteredExpenses.reduce((sum, expense) => {
+      const total = expenses.reduce((sum, expense) => {
         const amount = parseFloat(expense.amount) || 0;
         return sum + amount;
       }, 0);
-  
       setTotalExpense(total);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
   };
 
-  const fetchSaving = async (month) => {
+  const getTotalIncome = async () => {
     try {
-
-      const expensesCollection = collection(db, dbSetting.SavingMasterTable);
-  
-      // Use query to combine where conditions
-      const expensesQuery = query(
-        expensesCollection    
-      );
-  
-      const snapshot = await getDocs(expensesQuery);
-
-      const expensesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setSavings(expensesData);
-
+      const total = incomes.reduce((sum, income) => {
+        const amount = parseFloat(income.amount) || 0;
+        return sum + amount;
+      }, 0);
+      setTotalIncome(total);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
   };
-  
-  const fetchIncomes = async (month) => {
-    try {
-      const startOfMonth = new Date(new Date().getFullYear(), month - 1, 1); // Start of month
-      const endOfMonth = new Date(new Date().getFullYear(), month, 0, 23, 59, 59, 999); // End of month
-  
-      const startTimestamp = Timestamp.fromDate(startOfMonth);
-      const endTimestamp = Timestamp.fromDate(endOfMonth);
-  
-      const incomesCollection = collection(db, dbSetting.IncomeTable);
-  
-      // Use query to combine where conditions
-      const incomesQuery = query(
-        incomesCollection,
-        where("date", ">=", startTimestamp),
-        where("date", "<=", endTimestamp)
-      );
-  
-      const snapshot = await getDocs(incomesQuery);
-  
-      const filteredIncomes = snapshot.docs.map((doc) => doc.data());
-      const total = filteredIncomes.reduce((sum, income) => {
-        const amount = parseFloat(income.amount) || 0;
-        return sum + amount;
-      }, 0);
-  
-      setTotalIncome(total);
-    } catch (error) {
-      console.error("Error fetching incomes:", error);
-    }
-  };
-  
 
-  useEffect(() => {
-    fetchExpenses(selectedMonth);
-    fetchIncomes(selectedMonth);
-  }, [selectedMonth]);
+const updateExpense = (month) => {
+  try {
+    const currentYear = new Date().getFullYear();
+
+    const expense = fullExpenses.filter((expense) => {
+      const expenseDate = new Date(expense.date);
+
+      return (
+        expenseDate.getFullYear() === currentYear &&
+        expenseDate.getMonth() === month - 1 // JS months are 0-indexed
+      );
+    });
+
+    setExpenses(expense);
+  } catch (error) {
+    console.error("Error filtering expenses:", error);
+  }
+};
+
+const updateIncome = (month) => {
+  try {
+    const currentYear = new Date().getFullYear();
+
+    const incomes = fullIncome.filter((income) => {
+      const incomeDate = new Date(income.date);
+
+      return (
+        incomeDate.getFullYear() === currentYear &&
+        incomeDate.getMonth() === month - 1 // JS months are 0-indexed
+      );
+    });
+
+    setIncomes(incomes);
+  } catch (error) {
+    console.error("Error filtering expenses:", error);
+  }
+};
+
+  
+    const dispatch = useDispatch();
+      
+    const { data: fullExpenses = [], loading: categoriesLoading } = useSelector(
+      (state) => state.expenses
+    );
+     const { data: fullIncome = [], loading: IncomeLoading } = useSelector(
+      (state) => state.incomes
+    );
+
+    const { data: savings = [], loading: savingLoading } = useSelector(
+      (state) => state.savings
+    );
+  
+  
+    useEffect(() => {
+      const unsubscribe = dispatch(subscribeToexpenseDetails());
+      const unsubscribeIncome = dispatch(subscribeToincomeDetails());
+      const unsubscribeSaving = dispatch(subscribeToSavingDetails());
+ 
+      return () => {
+        unsubscribe();
+        unsubscribeIncome();
+        unsubscribeSaving();
+      };
+    }, [dispatch]);
+
+    useEffect(()=>{
+        updateExpense(selectedMonth);
+        updateIncome(selectedMonth)
+    },[fullExpenses,selectedMonth,fullIncome])
+
+    useEffect(() => {
+  getTotalExpense();
+  getTotalIncome();
+}, [expenses,selectedMonth]); // Recalculate when Redux state changes
 
   const handleMenuClick = (e) => {
     setSelectedMonth(parseInt(e.key) + 1); // Convert to 1-based month
@@ -142,7 +144,6 @@ const MonthlySummary = () => {
           lastName: capitalizeFirstLetter(storedUserInfo.lastName),
         });
       }
-      fetchSaving(selectedMonth);
 
     }, []);
 
@@ -238,7 +239,19 @@ const MonthlySummary = () => {
         <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
           <CategoryBased data={expenses}  totalExpense={totalExpense}/>
         </Suspense>
-        </div>
+</div>
+
+<div className="statistics-container">
+ <span className="statistics-title">Top Earnings</span>
+ 
+ </div>
+
+<div>
+        <Suspense fallback={<div style={{ textAlign: "center", padding: "20px" }}><Spin size="large" /></div>}>
+          <CategoryBasedIncome data={incomes}  totalExpense={totalExpense}/>
+        </Suspense>
+</div>
+
         <div className="statistics-container">
  <span className="statistics-title">Recent Transactions</span>
  <span className="statistics-dropdown">
