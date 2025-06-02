@@ -150,6 +150,10 @@
   border-radius: 8px !important; 
 }
 
+.ant-picker {
+  border-radius: 8px !important;
+}
+
 .ant-form-item .ant-form-item-label{
   font-family: "Delius", serif;
   font-weight: 400;

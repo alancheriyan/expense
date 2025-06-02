@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Radio, Select, Checkbox, message, Popconfirm } from "antd";
+import { Form, Input, Button, Drawer, Radio, Select, Checkbox, message, Popconfirm, DatePicker } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { db } from "../DataAcess/firebase";
 import { collection, addDoc, serverTimestamp,Timestamp,doc,updateDoc,deleteDoc } from "firebase/firestore";
 import { dbSetting } from "../DataAcess/dbSetting";
+import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { subscribeToIncomeTypes } from '../redux/incomeTypeSlice';
 import { subscribeToexpenseDetails } from '../redux/expenseSlice';
@@ -43,11 +44,14 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
     form.resetFields();
   };
 
+  
+
   useEffect(() => {
     if (editData) {
       setTransactionType(editData.type);
       form.setFieldsValue({
         ...editData,
+         date: dayjs(editData.date),
         categoryId: editData.categoryId || editData.savingTypeId || editData.categoryId,
       });
       setDrawerVisible(true);
@@ -68,6 +72,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
       if (editData?.id) {
         const docData = {
           ...values,
+          date: Timestamp.fromDate(values.date.toDate()),
           userId:userId,
           updatedOn: serverTimestamp(),
         };
@@ -165,6 +170,15 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
 
         <Form layout="vertical" form={form} 
         initialValues={{ avoidable: false,comments:"" }}>
+
+          {editData?.id?(
+            <Form.Item
+            name="date"
+            label="Date"
+            rules={[{ required: true, message: "Please choose the date" }]}
+          >
+            <DatePicker/>
+          </Form.Item>):""}
           <Form.Item
             name="amount"
             label="Amount"
