@@ -7,6 +7,19 @@ import { dbSetting } from "../DataAcess/dbSetting";
 export const subscribeToCategories = () => (dispatch) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return;
+
+  // Load cached data from localStorage first
+  const localData = localStorage.getItem("categories");
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      dispatch(setCategories(parsed));
+    } catch (e) {
+      console.error("Failed to parse categories from localStorage", e);
+    }
+  }
+
+  // Real-time Firestore sync
   const categoriesQuery = query(
     collection(db, dbSetting.CategoryTable),
     where("userId", "==", userId),
@@ -20,9 +33,13 @@ export const subscribeToCategories = () => (dispatch) => {
       createdOn: doc.data().createdOn?.toDate().toISOString() || null,
       updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
     }));
+
+    // Update Redux and localStorage
     dispatch(setCategories(categories));
+    localStorage.setItem("categories", JSON.stringify(categories));
   });
 };
+
 
 // Add New Category
 export const addCategory = createAsyncThunk(

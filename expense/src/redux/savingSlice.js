@@ -7,11 +7,25 @@ import { dbSetting } from "../DataAcess/dbSetting";
 export const subscribeToSavings = () => (dispatch) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return;
+
+  // Load cached data from localStorage first
+  const localData = localStorage.getItem("savings");
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      dispatch(setSavings(parsed));
+    } catch (e) {
+      console.error("Failed to parse savings from localStorage", e);
+    }
+  }
+
+  // Real-time Firestore sync
   const savingsQuery = query(
     collection(db, dbSetting.SavingTable),
     where("userId", "==", userId),
     orderBy("createdOn")
   );
+
   return onSnapshot(savingsQuery, (snapshot) => {
     const savings = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -19,9 +33,13 @@ export const subscribeToSavings = () => (dispatch) => {
       createdOn: doc.data().createdOn?.toDate().toISOString() || null,
       updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
     }));
+
+    // Update Redux and localStorage
     dispatch(setSavings(savings));
+    localStorage.setItem("savings", JSON.stringify(savings));
   });
 };
+
 
 // Add New Saving Goal
 export const addSaving = createAsyncThunk(

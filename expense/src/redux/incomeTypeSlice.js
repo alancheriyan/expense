@@ -8,6 +8,17 @@ export const subscribeToIncomeTypes = () => (dispatch) => {
   const userId = localStorage.getItem('userId');
   if (!userId) return;
 
+  // Load from localStorage first
+  const localData = localStorage.getItem('incomeTypes');
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      dispatch(setIncomeTypes(parsed));
+    } catch (e) {
+      console.error("Failed to parse incomeTypes from localStorage", e);
+    }
+  }
+
   const incomeTypesQuery = query(
     collection(db, dbSetting.IncomeTypeTable),
     where("userId", "==", userId),
@@ -22,9 +33,12 @@ export const subscribeToIncomeTypes = () => (dispatch) => {
       updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
     }));
 
-    dispatch(setIncomeTypes(incomeTypes)); // Update Redux state
+    // Save to Redux and localStorage
+    dispatch(setIncomeTypes(incomeTypes));
+    localStorage.setItem("incomeTypes", JSON.stringify(incomeTypes));
   });
 };
+
 
 // Add New Income Type
 export const addIncomeType = createAsyncThunk(

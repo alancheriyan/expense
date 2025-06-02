@@ -185,7 +185,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 rules={[{ required: true, message: "Please select a category" }]}
               >
                 <Select placeholder="Select Expense Category" className="boxborder">
-                  {expenseCategory.map((cat) => (
+                  {expenseCategory.filter((item) => item.isActive).map((cat) => (
                     <Option key={cat.id} value={cat.id}>
                       {cat.name}
                     </Option>
@@ -199,7 +199,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 rules={[{ required: true, message: "Please select payment type" }]}
               >
                 <Select placeholder="Select Payment Type" >
-                  {paymentTypes.map((pay) => (
+                  {paymentTypes.filter((item) => item.isActive).map((pay) => (
                     <Option key={pay.id} value={pay.id}>
                       {pay.name}
                     </Option>
@@ -225,7 +225,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
                 rules={[{ required: true, message: "Please select income type" }]}
               >
                 <Select placeholder="Select Income Type" >
-                  {incomeTypes.map((income) => (
+                  {incomeTypes.filter((item) => item.isActive).map((income) => (
                     <Option key={income.id} value={income.id}>
                       {income.name}
                     </Option>
@@ -248,7 +248,7 @@ const AddTransaction = ({currentDate,editData = null, onClose}) => {
               >
 
                 <Select placeholder="Select Saving Type">
-                  {savingTypes.map((savings) => (
+                  {savingTypes.filter((item) => item.isActive).map((savings) => (
                     <Option key={savings.id} value={savings.id}>
                       {savings.name}
                     </Option>

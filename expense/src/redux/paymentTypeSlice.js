@@ -8,12 +8,23 @@ export const subscribeToPaymentTypes = () => (dispatch) => {
   const userId = localStorage.getItem("userId");
   if (!userId) return;
 
+  // Load cached data from localStorage first
+  const localData = localStorage.getItem("paymentTypes");
+  if (localData) {
+    try {
+      const parsed = JSON.parse(localData);
+      dispatch(setPaymentTypes(parsed));
+    } catch (e) {
+      console.error("Failed to parse paymentTypes from localStorage", e);
+    }
+  }
+
+  // Real-time updates from Firestore
   const paymentTypesQuery = query(
     collection(db, dbSetting.PaymentTypeTable),
     where("userId", "==", userId),
     orderBy("createdOn")
   );
-
 
   return onSnapshot(paymentTypesQuery, (snapshot) => {
     const paymentTypes = snapshot.docs.map((doc) => ({
@@ -22,9 +33,13 @@ export const subscribeToPaymentTypes = () => (dispatch) => {
       createdOn: doc.data().createdOn?.toDate().toISOString() || null,
       updatedOn: doc.data().updatedOn?.toDate().toISOString() || null,
     }));
+
+    // Update Redux and localStorage
     dispatch(setPaymentTypes(paymentTypes));
+    localStorage.setItem("paymentTypes", JSON.stringify(paymentTypes));
   });
 };
+
 
 // Add New Payment Type
 export const addPaymentType = createAsyncThunk("paymentTypes/addPaymentType", async ({ value = "" } = {}, { rejectWithValue }) => {
